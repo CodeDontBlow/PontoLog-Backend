@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import Exp from "./models/Exp";
 import { db } from "../config";
+import Exportacao from "./models/Exportacao";
 
 const AppDataSource = new DataSource({
   type: "mysql",
@@ -9,8 +9,9 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [Exp],
+  entities: [Exportacao],
   synchronize: false,
+  logging: true,
 });
 
 AppDataSource.initialize()
