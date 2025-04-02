@@ -2,6 +2,8 @@ import { AppDataSource } from "..";
 import Exportacao from "../models/Exportacao";
 
 export default class ExportacaoService {
+  
+  //Produto por letra
   public static async getProduct(shType: string, letter: string): Promise<string[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -14,7 +16,7 @@ export default class ExportacaoService {
     return result.map((i) => i[shType]);
   }
 
-  //-------------        PRINCIPAL FATOR AGREGADO
+  //Principal fator agregado por ano
   public static async getFatByYear(year: number): Promise<number> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -25,6 +27,7 @@ export default class ExportacaoService {
       .getRawOne();
     return result;
   }
+  //Principal fator agreagado por período de ano
   public static async getFatByYearRange(startYear: number, endYear: number): Promise<number> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -36,8 +39,8 @@ export default class ExportacaoService {
     return result;
   }
 
-  //-------------        PRINCIPAL PRODUTO
-  public static async getProductByYear(sh: string, year: number): Promise<number> {
+  //Principal produto sh4 ou sh6 por ano
+  public static async getProductByYear(sh: string, year: number): Promise<string> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
       .select(`exp.${sh}`, "no_sh")
@@ -48,7 +51,8 @@ export default class ExportacaoService {
     return result;
   }
 
-  public static async getProductByYearRange(sh: string, startYear: number, endYear: number): Promise<number> {
+  //Principal produto sh4 ou sh6 por período de ano a ano
+  public static async getProductByYearRange(sh: string, startYear: number, endYear: number): Promise<string> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
       .select(`exp.${sh}`, "no_sh")
@@ -56,6 +60,20 @@ export default class ExportacaoService {
       .groupBy(`exp.${sh}`)
       .orderBy("COUNT(*)", "DESC")
       .getRawOne();
+    return result;
+  }
+
+  //Principais vias utilizadas no ano + total
+  public static async getViaByYear(year: number): Promise<{ NO_VIA: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.NO_VIA", "NO_VIA")
+      .addSelect("COUNT(*)", "total")
+      .where("exp.CO_ANO = :year", { year })
+      .groupBy("exp.NO_VIA")
+      .orderBy("total", "DESC")
+      .take(3)
+      .getRawMany();
     return result;
   }
 }
