@@ -42,5 +42,12 @@ const getProductByYearRange = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
-const ExpController = { getProduct, getFatByYear, getFatByYearRange, getProductByYear, getProductByYearRange };
+  const getViaByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const year = req.params.year
+      const data = await ExportacaoService.getViaByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
+
+const ExpController = { getProduct, getFatByYear, getFatByYearRange, getProductByYear, getProductByYearRange, getViaByYear};
 export default ExpController;
