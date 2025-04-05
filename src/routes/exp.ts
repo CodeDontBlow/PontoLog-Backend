@@ -16,4 +16,8 @@ router.get("/product/:sh/:startYear/:endYear", ExpController.getProductByYearRan
 //principais vias
 router.get("/via/:year", ExpController.getViaByYear("Vias por ano"));
 router.get("/via/:startYear/:endYear", ExpController.getViaByYearRange("Vias de ano até ano."));
+
+//principais urfs
+router.get("/urf/:year", ExpController.getUrfByYear("Urfs por ano"));
+router.get("/urf/:startYear/:endYear", ExpController.getUrfByYearRange("Urfs de ano até ano."));
 export default router;
