@@ -27,7 +27,7 @@ const getFatByYearRange = (message: string) =>
 
 const getProductByYear = (message: string) =>
   asyncHandler(async (req, res) => {
-    const sh = req.params.sh
+    const sh = req.params.sh;
     const year = req.params.year;
     const data = await ExportacaoService.getProductByYear(sh, Number(year));
     new SuccessResponse(message, data).send(res);
@@ -35,19 +35,27 @@ const getProductByYear = (message: string) =>
 
 const getProductByYearRange = (message: string) =>
   asyncHandler(async (req, res) => {
-    const sh = req.params.sh
+    const sh = req.params.sh;
     const startYear = req.params.startYear;
     const endYear = req.params.endYear;
     const data = await ExportacaoService.getProductByYearRange(sh, Number(startYear), Number(endYear));
     new SuccessResponse(message, data).send(res);
   });
 
-  const getViaByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const year = req.params.year
-      const data = await ExportacaoService.getViaByYear(Number(year));
-      new SuccessResponse(message, data).send(res);
-    });
+const getViaByYear = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const year = req.params.year;
+    const data = await ExportacaoService.getViaByYear(Number(year));
+    new SuccessResponse(message, data).send(res);
+  });
 
-const ExpController = { getProduct, getFatByYear, getFatByYearRange, getProductByYear, getProductByYearRange, getViaByYear};
+const getViaByYearRange = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const startYear = req.params.startYear;
+    const endYear = req.params.endYear;
+    const data = await ExportacaoService.getViaByYearRange(Number(startYear), Number(endYear));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const ExpController = { getProduct, getFatByYear, getFatByYearRange, getProductByYear, getProductByYearRange, getViaByYear, getViaByYearRange };
 export default ExpController;
