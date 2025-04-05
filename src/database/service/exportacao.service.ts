@@ -62,7 +62,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  //Principais vias utilizadas no ano + total
+  //Principais vias utilizadas no ano 
   public static async getViaByYear(year: number): Promise<{ NO_VIA: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -84,6 +84,33 @@ export default class ExportacaoService {
       .addSelect("COUNT(*)", "total")
       .where("exp.CO_ANO BETWEEN :startYear AND :endYear ", { startYear, endYear })
       .groupBy("exp.NO_VIA")
+      .orderBy("total", "DESC")
+      .take(3)
+      .getRawMany();
+    return result;
+  }
+  //Principais urfs utilizadas no ano 
+  public static async getUrfByYear(year: number): Promise<{ NO_URF: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.NO_URF", "NO_URF")
+      .addSelect("COUNT(*)", "total")
+      .where("exp.CO_ANO = :year", { year })
+      .groupBy("exp.NO_URF")
+      .orderBy("total", "DESC")
+      .take(3)
+      .getRawMany();
+    return result;
+  }
+
+  //Principais urfs utilizadas por período de ano até ano
+  public static async getUrfByYearRange(startYear: number, endYear: number): Promise<{ NO_URF: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.NO_URF", "NO_URF")
+      .addSelect("COUNT(*)", "total")
+      .where("exp.CO_ANO BETWEEN :startYear AND :endYear ", { startYear, endYear })
+      .groupBy("exp.NO_URF")
       .orderBy("total", "DESC")
       .take(3)
       .getRawMany();
