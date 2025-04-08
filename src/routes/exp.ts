@@ -20,4 +20,7 @@ router.get("/via/:startYear/:endYear", ExpController.getViaByYearRange("Vias de 
 //principais urfs
 router.get("/urf/:year", ExpController.getUrfByYear("Urfs por ano"));
 router.get("/urf/:startYear/:endYear", ExpController.getUrfByYearRange("Urfs de ano até ano."));
+
+//principais vl_agregado
+router.get("/vl_agregado/:year", ExpController.getVlAgregadoByYearAndMonth("Valor Agregado por ano e mes"));
 export default router;
