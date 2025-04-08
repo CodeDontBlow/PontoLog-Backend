@@ -62,7 +62,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  //Principais vias utilizadas no ano 
+  //Principais vias utilizadas no ano
   public static async getViaByYear(year: number): Promise<{ NO_VIA: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -89,7 +89,7 @@ export default class ExportacaoService {
       .getRawMany();
     return result;
   }
-  //Principais urfs utilizadas no ano 
+  //Principais urfs utilizadas no ano
   public static async getUrfByYear(year: number): Promise<{ NO_URF: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -123,11 +123,36 @@ export default class ExportacaoService {
       .createQueryBuilder("exp")
       .select("exp.CO_MES", "CO_MES")
       .addSelect("SUM(VL_AGREGADO)", "total_agregado")
-      .where("exp.CO_ANO = :year", { year  })
+      .where("exp.CO_ANO = :year", { year })
       .groupBy("exp.CO_MES")
       .orderBy("CO_MES", "ASC")
       .getRawMany();
     return result;
   }
 
+  //kg_liquido por ano e mes
+  public static async getKgLiquidoByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
+      .where("exp.CO_ANO = :year", { year })
+      .groupBy("exp.CO_MES")
+      .orderBy("CO_MES", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  //vl_fob por ano e mes
+  public static async getVlFobByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(VL_FOB)", "total_vl_fob")
+      .where("exp.CO_ANO = :year", { year })
+      .groupBy("exp.CO_MES")
+      .orderBy("CO_MES", "ASC")
+      .getRawMany();
+    return result;
+  }
 }
