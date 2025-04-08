@@ -6,6 +6,7 @@ import { Column, Entity, PrimaryGeneratedColumn, Index } from "typeorm";
 @Index("idx_ano_no_sh4_por", ["ano", "nomeSh4"])
 @Index("idx_ano_via", ["ano", "via"])
 @Index("idx_ano_urf", ["ano", "urf"])
+@Index("idx_ano_mes_vl_agregado", ["ano", "mes", "valorAgregado"])
 export default class Exportacao {
   @PrimaryGeneratedColumn({ name: "ID" })
   readonly id: number;

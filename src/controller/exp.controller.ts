@@ -72,6 +72,13 @@ const getViaByYearRange = (message: string) =>
       new SuccessResponse(message, data).send(res);
     });
 
+    const getVlAgregadoByYearAndMonth = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const year = req.params.year;
+        const data = await ExportacaoService.getVlAgregadoByYearAndMonth(Number(year));
+        new SuccessResponse(message, data).send(res);
+      });
+
     const ExpController = {
       getProduct,
       getFatByYear,
@@ -81,7 +88,8 @@ const getViaByYearRange = (message: string) =>
       getViaByYear,
       getViaByYearRange,
       getUrfByYear,
-      getUrfByYearRange
+      getUrfByYearRange,
+      getVlAgregadoByYearAndMonth
     };
     
 export default ExpController;

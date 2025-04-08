@@ -116,4 +116,18 @@ export default class ExportacaoService {
       .getRawMany();
     return result;
   }
+
+  //vl_agreagado por ano e mes
+  public static async getVlAgregadoByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(VL_AGREGADO)", "total_agregado")
+      .where("exp.CO_ANO = :year", { year  })
+      .groupBy("exp.CO_MES")
+      .orderBy("CO_MES", "ASC")
+      .getRawMany();
+    return result;
+  }
+
 }
