@@ -57,39 +57,55 @@ const getViaByYearRange = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
-  const getUrfByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const year = req.params.year;
-      const data = await ExportacaoService.getUrfByYear(Number(year));
-      new SuccessResponse(message, data).send(res);
-    });
-  
-  const getUrfByYearRange = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const startYear = req.params.startYear;
-      const endYear = req.params.endYear;
-      const data = await ExportacaoService.getUrfByYearRange(Number(startYear), Number(endYear));
-      new SuccessResponse(message, data).send(res);
-    });
+const getUrfByYear = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const year = req.params.year;
+    const data = await ExportacaoService.getUrfByYear(Number(year));
+    new SuccessResponse(message, data).send(res);
+  });
 
-    const getVlAgregadoByYearAndMonth = (message: string) =>
-      asyncHandler(async (req, res) => {
-        const year = req.params.year;
-        const data = await ExportacaoService.getVlAgregadoByYearAndMonth(Number(year));
-        new SuccessResponse(message, data).send(res);
-      });
+const getUrfByYearRange = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const startYear = req.params.startYear;
+    const endYear = req.params.endYear;
+    const data = await ExportacaoService.getUrfByYearRange(Number(startYear), Number(endYear));
+    new SuccessResponse(message, data).send(res);
+  });
 
-    const ExpController = {
-      getProduct,
-      getFatByYear,
-      getFatByYearRange,
-      getProductByYear,
-      getProductByYearRange,
-      getViaByYear,
-      getViaByYearRange,
-      getUrfByYear,
-      getUrfByYearRange,
-      getVlAgregadoByYearAndMonth
-    };
-    
+const getVlAgregadoByYearAndMonth = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const year = req.params.year;
+    const data = await ExportacaoService.getVlAgregadoByYearAndMonth(Number(year));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const getKgLiquidoByYearAndMonth = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const year = req.params.year;
+    const data = await ExportacaoService.getKgLiquidoByYearAndMonth(Number(year));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const getVlFobByYearAndMonth = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const year = req.params.year;
+    const data = await ExportacaoService.getVlFobByYearAndMonth(Number(year));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const ExpController = {
+  getProduct,
+  getFatByYear,
+  getFatByYearRange,
+  getProductByYear,
+  getProductByYearRange,
+  getViaByYear,
+  getViaByYearRange,
+  getUrfByYear,
+  getUrfByYearRange,
+  getVlAgregadoByYearAndMonth,
+  getKgLiquidoByYearAndMonth,
+  getVlFobByYearAndMonth,
+};
+
 export default ExpController;
