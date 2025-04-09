@@ -117,7 +117,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  //vl_agreagado por ano e mes
+  //VL_AGREGADO
   public static async getVlAgregadoByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -130,7 +130,19 @@ export default class ExportacaoService {
     return result;
   }
 
-  //kg_liquido por ano e mes
+  public static async getVlAgregadoByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_ANO", "CO_ANO")
+      .addSelect("SUM(VL_AGREGADO)", "total_agregado")
+      .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+      .groupBy("exp.CO_ANO")
+      .orderBy("CO_ANO", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  //KG_LIQUIDO
   public static async getKgLiquidoByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -143,7 +155,19 @@ export default class ExportacaoService {
     return result;
   }
 
-  //vl_fob por ano e mes
+  public static async getKgLiquidoByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_ANO", "CO_ANO")
+      .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
+      .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+      .groupBy("exp.CO_ANO")
+      .orderBy("CO_ANO", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  //VL_FOB
   public static async getVlFobByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
@@ -152,6 +176,18 @@ export default class ExportacaoService {
       .where("exp.CO_ANO = :year", { year })
       .groupBy("exp.CO_MES")
       .orderBy("CO_MES", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  public static async getVlFobByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_ANO", "CO_ANO")
+      .addSelect("SUM(VL_FOB)", "total_vl_fob")
+      .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+      .groupBy("exp.CO_ANO")
+      .orderBy("CO_ANO", "ASC")
       .getRawMany();
     return result;
   }

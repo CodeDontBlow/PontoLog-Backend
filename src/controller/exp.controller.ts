@@ -79,6 +79,14 @@ const getVlAgregadoByYearAndMonth = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
+  const getVlAgregadoByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const startYear = req.params.startYear
+      const endYear = req.params.endYear
+      const data = await ExportacaoService.getVlAgregadoByYear(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
 const getKgLiquidoByYearAndMonth = (message: string) =>
   asyncHandler(async (req, res) => {
     const year = req.params.year;
@@ -86,12 +94,28 @@ const getKgLiquidoByYearAndMonth = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
+  const getKgLiquidoByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const startYear = req.params.startYear;
+      const endYear = req.params.endYear;
+      const data = await ExportacaoService.getKgLiquidoByYear(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
 const getVlFobByYearAndMonth = (message: string) =>
   asyncHandler(async (req, res) => {
     const year = req.params.year;
     const data = await ExportacaoService.getVlFobByYearAndMonth(Number(year));
     new SuccessResponse(message, data).send(res);
   });
+
+  const getVlFobByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const startYear = req.params.startYear;
+      const endYear = req.params.endYear;
+      const data = await ExportacaoService.getVlFobByYear(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
 
 const ExpController = {
   getProduct,
@@ -106,6 +130,9 @@ const ExpController = {
   getVlAgregadoByYearAndMonth,
   getKgLiquidoByYearAndMonth,
   getVlFobByYearAndMonth,
+  getVlAgregadoByYear,
+  getKgLiquidoByYear,
+  getVlFobByYear
 };
 
 export default ExpController;
