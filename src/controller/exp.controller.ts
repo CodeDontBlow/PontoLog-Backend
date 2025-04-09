@@ -79,13 +79,22 @@ const getVlAgregadoByYearAndMonth = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
-  const getVlAgregadoByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const startYear = req.params.startYear
-      const endYear = req.params.endYear
-      const data = await ExportacaoService.getVlAgregadoByYear(Number(startYear), Number(endYear));
-      new SuccessResponse(message, data).send(res);
-    });
+const getVlAgregadoByYear = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const startYear = req.params.startYear;
+    const endYear = req.params.endYear;
+    const data = await ExportacaoService.getVlAgregadoByYear(Number(startYear), Number(endYear));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const getVlAgregadoByYearAndProduct = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const shType = req.params.shType;
+    const year = req.params.year;
+    const productName = req.params.productName;
+    const data = await ExportacaoService.getVlAgregadoByYearAndProduct(shType, Number(year), productName);
+    new SuccessResponse(message, data).send(res);
+  });
 
 const getKgLiquidoByYearAndMonth = (message: string) =>
   asyncHandler(async (req, res) => {
@@ -94,13 +103,22 @@ const getKgLiquidoByYearAndMonth = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
-  const getKgLiquidoByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const startYear = req.params.startYear;
-      const endYear = req.params.endYear;
-      const data = await ExportacaoService.getKgLiquidoByYear(Number(startYear), Number(endYear));
-      new SuccessResponse(message, data).send(res);
-    });
+const getKgLiquidoByYear = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const startYear = req.params.startYear;
+    const endYear = req.params.endYear;
+    const data = await ExportacaoService.getKgLiquidoByYear(Number(startYear), Number(endYear));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const getKgLiquidoByYearAndProduct = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const shType = req.params.shType;
+    const year = req.params.year;
+    const productName = req.params.productName;
+    const data = await ExportacaoService.getKgLiquidoByYearAndProduct(shType, Number(year), productName);
+    new SuccessResponse(message, data).send(res);
+  });
 
 const getVlFobByYearAndMonth = (message: string) =>
   asyncHandler(async (req, res) => {
@@ -109,13 +127,22 @@ const getVlFobByYearAndMonth = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
-  const getVlFobByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const startYear = req.params.startYear;
-      const endYear = req.params.endYear;
-      const data = await ExportacaoService.getVlFobByYear(Number(startYear), Number(endYear));
-      new SuccessResponse(message, data).send(res);
-    });
+const getVlFobByYear = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const startYear = req.params.startYear;
+    const endYear = req.params.endYear;
+    const data = await ExportacaoService.getVlFobByYear(Number(startYear), Number(endYear));
+    new SuccessResponse(message, data).send(res);
+  });
+
+const getVlFobByYearAndProduct = (message: string) =>
+  asyncHandler(async (req, res) => {
+    const shType = req.params.shType;
+    const year = req.params.year;
+    const productName = req.params.productName;
+    const data = await ExportacaoService.getVlFobByYearAndProduct(shType, Number(year), productName);
+    new SuccessResponse(message, data).send(res);
+  });
 
 const ExpController = {
   getProduct,
@@ -132,7 +159,10 @@ const ExpController = {
   getVlFobByYearAndMonth,
   getVlAgregadoByYear,
   getKgLiquidoByYear,
-  getVlFobByYear
+  getVlFobByYear,
+  getVlAgregadoByYearAndProduct,
+  getKgLiquidoByYearAndProduct,
+  getVlFobByYearAndProduct,
 };
 
 export default ExpController;

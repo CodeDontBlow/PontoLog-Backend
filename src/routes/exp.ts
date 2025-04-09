@@ -24,13 +24,16 @@ router.get("/urf/:startYear/:endYear", ExpController.getUrfByYearRange("Urfs de 
 //vl_agregado
 router.get("/vl_agregado/:year", ExpController.getVlAgregadoByYearAndMonth("Valor Agregado por ano e mes"));
 router.get("/vl_agregado/:startYear/:endYear", ExpController.getVlAgregadoByYear("Valor Agregado de ano até ano"));
+router.get("/vl_agregado/:shType/:year/:productName", ExpController.getVlAgregadoByYearAndProduct("Valor Agregado do produto de ano até ano"));
 
 //kg_liquido
 router.get("/kg_liquido/:year", ExpController.getKgLiquidoByYearAndMonth("Kg liquido por ano e mes"));
 router.get("/kg_liquido/:startYear/:endYear", ExpController.getKgLiquidoByYear("Kg liquido por ano até ano"));
+router.get("/kg_liquido/:shType/:year/:productName", ExpController.getKgLiquidoByYearAndProduct("Kg liquido do produto de ano até ano"));
 
-//vl_fob 
+//vl_fob
 router.get("/vl_fob/:year", ExpController.getVlFobByYearAndMonth("Valor fob por ano e mes"));
 router.get("/vl_fob/:startYear/:endYear", ExpController.getVlFobByYear("Valor fob por ano até ano"));
+router.get("/vl_fob/:shType/:year/:productName", ExpController.getVlFobByYearAndProduct("Valor fob do produto de ano até ano"));
 
 export default router;
