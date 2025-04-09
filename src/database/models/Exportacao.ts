@@ -9,9 +9,9 @@ import { Column, Entity, PrimaryGeneratedColumn, Index } from "typeorm";
 @Index("idx_ano_mes_vl_agregado", ["ano", "mes", "valorAgregado"])
 @Index("idx_ano_mes_kg_liquido", ["ano", "mes", "kg"])
 @Index("idx_ano_mes_vl_fob", ["ano", "mes", "valorFob"])
-@Index("idx_ano_vl_agregado", ["ano","valorAgregado"])
-@Index("idx_ano_kg_liquido", ["ano","kg"])
-@Index("idx_ano_vl_fob", ["ano","valorFob"])
+@Index("idx_ano_vl_agregado", ["ano", "valorAgregado"])
+@Index("idx_ano_kg_liquido", ["ano", "kg"])
+@Index("idx_ano_vl_fob", ["ano", "valorFob"])
 export default class Exportacao {
   @PrimaryGeneratedColumn({ name: "ID" })
   readonly id: number;

@@ -117,6 +117,7 @@ export default class ExportacaoService {
     return result;
   }
 
+  //------------------------------ INFO GERAL ----------------------------------------------------------------------//
   //VL_AGREGADO
   public static async getVlAgregadoByYearAndMonth(year: number): Promise<{ CO_MES: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
@@ -130,7 +131,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  public static async getVlAgregadoByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+  public static async getVlAgregadoByYear(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
       .select("exp.CO_ANO", "CO_ANO")
@@ -138,6 +139,18 @@ export default class ExportacaoService {
       .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
       .groupBy("exp.CO_ANO")
       .orderBy("CO_ANO", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  public static async getVlAgregadoByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(VL_AGREGADO)", "total_agregado")
+      .where(`exp.CO_ANO = :year AND exp.${shType} = :productName`, { year, productName })
+      .groupBy("exp.CO_MES")
+      .orderBy("exp.CO_MES", "ASC")
       .getRawMany();
     return result;
   }
@@ -155,7 +168,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  public static async getKgLiquidoByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+  public static async getKgLiquidoByYear(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
       .select("exp.CO_ANO", "CO_ANO")
@@ -163,6 +176,18 @@ export default class ExportacaoService {
       .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
       .groupBy("exp.CO_ANO")
       .orderBy("CO_ANO", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  public static async getKgLiquidoByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
+      .where(`exp.CO_ANO = :year AND exp.${shType} = :productName`, { year, productName })
+      .groupBy("exp.CO_MES")
+      .orderBy("CO_MES", "ASC")
       .getRawMany();
     return result;
   }
@@ -180,7 +205,7 @@ export default class ExportacaoService {
     return result;
   }
 
-  public static async getVlFobByYear(startYear: number, endYear:number): Promise<{ CO_ANO: string; total: number }[]> {
+  public static async getVlFobByYear(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
     const result = await AppDataSource.getRepository(Exportacao)
       .createQueryBuilder("exp")
       .select("exp.CO_ANO", "CO_ANO")
@@ -188,6 +213,18 @@ export default class ExportacaoService {
       .where("exp.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
       .groupBy("exp.CO_ANO")
       .orderBy("CO_ANO", "ASC")
+      .getRawMany();
+    return result;
+  }
+
+  public static async getVlFobByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_MES", "CO_MES")
+      .addSelect("SUM(VL_FOB)", "total_kg_liquido")
+      .where(`exp.CO_ANO = :year AND exp.${shType} = :productName`, { year, productName })
+      .groupBy("exp.CO_MES")
+      .orderBy("CO_MES", "ASC")
       .getRawMany();
     return result;
   }
