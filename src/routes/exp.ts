@@ -38,5 +38,6 @@ router.get("/vl_fob/:shType/:year/:productName", ExpController.getVlFobByYearAnd
 
 //vl_fob_product
 router.get("/vl_fob/:shType/:startYear/:endYear/:productName", ExpController.getVlFobByYearForYearAndProduct("Valor fob do produto de um ano de início até um ano de término"))
-
+router.get('/kg_liquido/:shType/:startYear/:endYear/:productName', ExpController.getKgLiquidoByYearForYearAndProduct('Valor kg liquido de ano até ano por produto'))
+router.get('/vl_agregado/:shType/:startYear/:endYear/:productName', ExpController.getVlAgregadoByYearForYearAndProduct('Valor agregado de ano até ano por produto'))
 export default router;

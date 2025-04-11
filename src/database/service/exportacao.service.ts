@@ -240,4 +240,29 @@ export default class ExportacaoService {
       .getRawMany()
       return result
   }
+
+  public static async getKgLiquidoByYearForYearAndProduct(shType: string, startYear: number, endYear: number, productName: string): Promise<{ CO_ANO: string; total: number}[]>{
+    const result = await AppDataSource.getRepository(Exportacao)
+    .createQueryBuilder('exp')
+    .select('exp.CO_ANO', 'CO_ANO')
+    .addSelect('SUM(KG_LIQUIDO)', 'total_kg_liquido')
+    .where(`exp.CO_ANO BETWEEN :startYear AND :endYear AND exp.${shType} = :productName`, {startYear, endYear, productName})
+    .groupBy('exp.CO_ANO')
+    .orderBy('CO_ANO', 'ASC')
+    .getRawMany()
+    return result
+  }
+
+  public static async getVlAgregadoByYearForYearAndProduct(shType: string, startYear: number, endYear: number, productName: string): Promise<{ CO_ANO: string; total: number}[]>{
+    const result = await AppDataSource.getRepository(Exportacao)
+    .createQueryBuilder('exp')
+    .select('exp.CO_ANO', 'CO_ANO')
+    .addSelect('SUM(VL_AGREGADO)', 'total_vl_agregado')
+    .where(`exp.CO_ANO BETWEEN :startYear AND :endYear AND exp.${shType} = :productName`, {startYear, endYear, productName})
+    .groupBy('exp.CO_ANO')
+    .orderBy('CO_ANO', 'ASC')
+    .getRawMany()
+    return result
+  }
+
 }
