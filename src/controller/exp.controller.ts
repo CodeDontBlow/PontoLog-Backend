@@ -144,6 +144,38 @@ const getVlFobByYearAndProduct = (message: string) =>
     new SuccessResponse(message, data).send(res);
   });
 
+  const getVlFobByYearForYearAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const shType = req.params.shType
+      const startYear = req.params.startYear
+      const endYear = req.params.endYear
+      const productName = req.params.productName
+      const data= await ExportacaoService.getVlFobByYearForYearAndProduct(shType, Number(startYear), Number(endYear), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  const getKgLiquidoByYearForYearAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const shType = req.params.shType
+      const startYear = req.params.startYear
+      const endYear = req.params.endYear
+      const productName = req.params.productName
+      const data= await ExportacaoService.getKgLiquidoByYearForYearAndProduct(shType, Number(startYear), Number(endYear), productName);
+      new SuccessResponse(message, data).send(res);
+    })
+
+
+    const getVlAgregadoByYearForYearAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const shType = req.params.shType
+        const startYear = req.params.startYear
+        const endYear = req.params.endYear
+        const productName = req.params.productName
+        const data= await ExportacaoService.getVlAgregadoByYearForYearAndProduct(shType, Number(startYear), Number(endYear), productName);
+        new SuccessResponse(message, data).send(res);
+      })
+
+
 const ExpController = {
   getProduct,
   getFatByYear,
@@ -163,6 +195,9 @@ const ExpController = {
   getVlAgregadoByYearAndProduct,
   getKgLiquidoByYearAndProduct,
   getVlFobByYearAndProduct,
+  getVlFobByYearForYearAndProduct,
+  getKgLiquidoByYearForYearAndProduct,
+  getVlAgregadoByYearForYearAndProduct,
 };
 
 export default ExpController;
