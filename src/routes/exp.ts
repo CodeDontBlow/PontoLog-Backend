@@ -36,4 +36,7 @@ router.get("/vl_fob/:year", ExpController.getVlFobByYearAndMonth("Valor fob por 
 router.get("/vl_fob/:startYear/:endYear", ExpController.getVlFobByYear("Valor fob por ano até ano"));
 router.get("/vl_fob/:shType/:year/:productName", ExpController.getVlFobByYearAndProduct("Valor fob do produto de ano até ano"));
 
+//vl_fob_product
+router.get("/vl_fob/:shType/:starYear/:endYear/:productName", ExpController.getVlFobByYearForYearAndProduct("Valor fob do produto de um ano de início até um ano de término"))
+
 export default router;

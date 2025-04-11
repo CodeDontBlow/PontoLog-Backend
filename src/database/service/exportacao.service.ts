@@ -228,4 +228,16 @@ export default class ExportacaoService {
       .getRawMany();
     return result;
   }
+
+  public static async getVlFobByYearForYearAndProduct(shType: string, startYear: number, endYear: number, productName: string): Promise<{ CO_ANO: string; total: number }[]> {
+    const result = await AppDataSource.getRepository(Exportacao)
+      .createQueryBuilder("exp")
+      .select("exp.CO_ANO", "CO_ANO")
+      .addSelect("SUM(VL_FOB)", "total_vl_fob")
+      .where(`exp.CO_ANO BETWEEN :startYear AND :endYear AND exp.${shType} = :productName`, {startYear, endYear, productName})
+      .groupBy("exp.CO_ANO")
+      .orderBy("CO_ANO", "ASC")
+      .getRawMany()
+      return result
+  }
 }
