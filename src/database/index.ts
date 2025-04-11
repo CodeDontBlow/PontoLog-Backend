@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { db } from "../config";
-import Exportacao from "./models/Exportacao";
+import { Exportacao } from "./models/Exportacao";
+import { Importacao } from "./models/Importacao";
 
 const AppDataSource = new DataSource({
   type: "mysql",
@@ -9,7 +10,7 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [Exportacao],
+  entities: [Exportacao, Importacao],
   synchronize: false,
   logging: true,
 });
