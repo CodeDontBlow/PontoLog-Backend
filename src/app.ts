@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./routes/exp";
+import router from "./routes/comex";
 import cors from "cors";
 import "./database";
 import { corsUrl } from "./config";

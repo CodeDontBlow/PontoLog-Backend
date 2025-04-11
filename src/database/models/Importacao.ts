@@ -1,7 +1,7 @@
 import ComexBase from "./ComexBase";
 import { Entity, Index } from "typeorm";
 
-@Entity({ name: "EXPORTACAO" })
+@Entity({ name: "IMPORTACAO" })
 @Index("idx_ano_fat_agreg", ["ano", "fatorAgregado"])
 @Index("idx_ano_no_sh6_por", ["ano", "nomeSh6"])
 @Index("idx_ano_no_sh4_por", ["ano", "nomeSh4"])
@@ -16,4 +16,4 @@ import { Entity, Index } from "typeorm";
 @Index("idx_no_sh6_por", ["nomeSh6"])
 @Index("idx_no_sh4_por", ["nomeSh4"])
 @Index("idx_no_sh2_por", ["nomeSh2"])
-export class Exportacao extends ComexBase {}
+export class Importacao extends ComexBase {}
