@@ -1,176 +1,159 @@
 import asyncHandler from "express-async-handler";
-import ComexService from "../database/service/comex.service";
 import { SuccessResponse } from "../core/ApiResponse";
+import ComexRepository from "../database/repository/comexRepository";
 
-const getProductByLetter = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, letter, sh } = req.params;
-    const data = await ComexService.getProductByLetter(entity, sh, letter);
-    new SuccessResponse(message, data).send(res);
-  });
+export default abstract class ComexController<T> {
+  protected repository: ComexRepository<T>;
 
-const getFatByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getFatByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
+  constructor(repository: ComexRepository<T>) {
+    this.repository = repository;
+  }
 
-const getFatByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getFatByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getProductByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, sh, year } = req.params;
-    const data = await ComexService.getProductByYear(entity, sh, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getProductByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, sh, startYear, endYear } = req.params;
-    const data = await ComexService.getProductByYearRange(entity, sh, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getViaByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getViaByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getViaByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getViaByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getUrfByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getUrfByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getUrfByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getUrfByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getVlAgregadoByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getVlAgregadoByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getVlAgregadoByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getVlAgregadoByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getVlAgregadoByYearAndProduct = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, shType, year, productName } = req.params;
-    const data = await ComexService.getVlAgregadoByYearAndProduct(entity, shType, Number(year), productName);
-    new SuccessResponse(message, data).send(res);
-  });
-
-  const getVlAgregadoByYearRangeAndProduct = (message: string) =>
+  getProductByLetter = (message: string) =>
     asyncHandler(async (req, res) => {
-      const { entity, shType, startYear, endYear, productName } = req.params;
-      const data = await ComexService.getVlAgregadoByYearRangeAndProduct(entity, shType, Number(startYear), Number(endYear), productName);
+      const { letter, sh } = req.params;
+      const data = await this.repository.getProductByLetter(sh, letter);
       new SuccessResponse(message, data).send(res);
     });
 
-const getKgLiquidoByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getKgLiquidoByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getKgLiquidoByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getKgLiquidoByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
-
-const getKgLiquidoByYearAndProduct = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, shType, year, productName } = req.params;
-    const data = await ComexService.getKgLiquidoByYearAndProduct(entity, shType, Number(year), productName);
-    new SuccessResponse(message, data).send(res);
-  });
-
-  const getKgLiquidoByYearRangeAndProduct = (message: string) =>
+  getFatByYear = (message: string) =>
     asyncHandler(async (req, res) => {
-      const { entity, shType, startYear, endYear, productName } = req.params;
-      const data = await ComexService.getKgLiquidoByYearRangeAndProduct(entity, shType, Number(startYear), Number(endYear), productName);
+      const { year } = req.params;
+      const uf = req.query.uf as string;
+      const data = await this.repository.getFatByYear(Number(year), uf);
       new SuccessResponse(message, data).send(res);
     });
 
-const getVlFobByYear = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getVlFobByYear(entity, Number(year));
-    new SuccessResponse(message, data).send(res);
-  });
+  getFatByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getFatByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
 
-const getVlFobByYearRange = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, startYear, endYear } = req.params;
-    const data = await ComexService.getVlFobByYearRange(entity, Number(startYear), Number(endYear));
-    new SuccessResponse(message, data).send(res);
-  });
+  getProductByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { sh, year } = req.params;
+      const data = await this.repository.getProductByYear(sh, Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
 
-const getVlFobByYearAndProduct = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, shType, year, productName } = req.params;
-    const data = await ComexService.getVlFobByYearAndProduct(entity, shType, Number(year), productName);
-    new SuccessResponse(message, data).send(res);
-  });
+  getProductByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { sh, startYear, endYear } = req.params;
+      const data = await this.repository.getProductByYearRange(sh, Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
 
-const getVlFobByYearRangeAndProduct = (message: string) =>
-  asyncHandler(async (req, res) => {
-    const { entity, shType, startYear, endYear, productName } = req.params;
-    const data = await ComexService.getVlFobByYearRangeAndProduct(entity, shType, Number(startYear), Number(endYear), productName);
-    new SuccessResponse(message, data).send(res);
-  });
+  getViaByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const data = await this.repository.getViaByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
 
-const ComexController = {
-  getProductByLetter,
-  getFatByYear,
-  getFatByYearRange,
-  getProductByYear,
-  getProductByYearRange,
-  getViaByYear,
-  getViaByYearRange,
-  getUrfByYear,
-  getUrfByYearRange,
-  getVlAgregadoByYear,
-  getKgLiquidoByYear,
-  getVlFobByYear,
-  getVlAgregadoByYearRange,
-  getKgLiquidoByYearRange,
-  getVlFobByYearRange,
-  getVlAgregadoByYearAndProduct,
-  getKgLiquidoByYearAndProduct,
-  getVlFobByYearAndProduct,
-  getVlFobByYearRangeAndProduct,
-  getKgLiquidoByYearRangeAndProduct,
-  getVlAgregadoByYearRangeAndProduct,
-};
+  getViaByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getViaByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
 
-export default ComexController;
+  getUrfByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const data = await this.repository.getUrfByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getUrfByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getUrfByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlAgregadoByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const data = await this.repository.getVlAgregadoByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlAgregadoByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getVlAgregadoByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlAgregadoByYearAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, year, productName } = req.params;
+      const data = await this.repository.getVlAgregadoByYearAndProduct(shType, Number(year), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlAgregadoByYearRangeAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, startYear, endYear, productName } = req.params;
+      const data = await this.repository.getVlAgregadoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getKgLiquidoByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const data = await this.repository.getKgLiquidoByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getKgLiquidoByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getKgLiquidoByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getKgLiquidoByYearAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, year, productName } = req.params;
+      const data = await this.repository.getKgLiquidoByYearAndProduct(shType, Number(year), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getKgLiquidoByYearRangeAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, startYear, endYear, productName } = req.params;
+      const data = await this.repository.getKgLiquidoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlFobByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const data = await this.repository.getVlFobByYear(Number(year));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlFobByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const data = await this.repository.getVlFobByYearRange(Number(startYear), Number(endYear));
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlFobByYearAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, year, productName } = req.params;
+      const data = await this.repository.getVlFobByYearAndProduct(shType, Number(year), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getVlFobByYearRangeAndProduct = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { shType, startYear, endYear, productName } = req.params;
+      const data = await this.repository.getVlFobByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName);
+      new SuccessResponse(message, data).send(res);
+    });
+}
