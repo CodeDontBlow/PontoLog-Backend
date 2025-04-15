@@ -58,12 +58,18 @@ export default class ComexService {
     return result;
   }
 
-  public static async getViaByYear<T>(entity: EntityTarget<T>, year: number): Promise<{ NO_VIA: string; total: number }[]> {
-    const result = await AppDataSource.getRepository(entity)
+  public static async getViaByYear<T>(entity: EntityTarget<T>, year: number, applyStateFilter: boolean, state: string): Promise<{ NO_VIA: string; total: number }[]> {
+    const query = await AppDataSource.getRepository(entity)
       .createQueryBuilder("ent")
       .select("ent.NO_VIA", "NO_VIA")
       .addSelect("COUNT(*)", "total")
       .where("ent.CO_ANO = :year", { year })
+
+    if (applyStateFilter){
+      query.andWhere("NO_UF = :state", {state})
+    }
+
+    const result = await query
       .groupBy("ent.NO_VIA")
       .orderBy("total", "DESC")
       .take(3)

@@ -15,7 +15,7 @@ router.get("/product/:entity/:sh/:year", ComexController.getProductByYear("Produ
 router.get("/product/:entity/:sh/:startYear/:endYear", ComexController.getProductByYearRange("Produto de ano até ano."));
 
 // principais vias
-router.get("/via/:entity/:year", ComexController.getViaByYear("Vias por ano."));
+router.get("/via/:entity/:year/:applyStateFilter/:state", ComexController.getViaByYear("Vias por ano."));
 router.get("/via/:entity/:startYear/:endYear", ComexController.getViaByYearRange("Vias de ano até ano."));
 
 // principais urfs

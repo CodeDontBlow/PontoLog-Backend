@@ -39,8 +39,8 @@ const getProductByYearRange = (message: string) =>
 
 const getViaByYear = (message: string) =>
   asyncHandler(async (req, res) => {
-    const { entity, year } = req.params;
-    const data = await ComexService.getViaByYear(entity, Number(year));
+    const { entity, year, applyStateFilter, state } = req.params;
+    const data = await ComexService.getViaByYear(entity, Number(year), applyStateFilter == 'true', state);
     new SuccessResponse(message, data).send(res);
   });
 
