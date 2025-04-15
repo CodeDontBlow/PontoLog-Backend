@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./routes/comex";
+import router from "./routes";
 import cors from "cors";
 import "./database";
 import { corsUrl } from "./config";
@@ -10,5 +10,5 @@ app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
 app.use(router);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Listening on port ${port}`);
 });
