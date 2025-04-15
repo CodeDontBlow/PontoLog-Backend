@@ -31,214 +31,304 @@ export default abstract class ComexRepository<T> {
     const result = await queryBuilder.groupBy("ent.CO_FAT_AGREG").orderBy("COUNT(*)", "DESC").getRawOne();
     return result;
   }
-
-  public async getProductByYear(sh: string, year: number): Promise<string> {
-    const repo = AppDataSource.getRepository(this.entity);
-    const result = await repo
+  
+  public async getProductByYear(sh: string, year: number, uf?: string): Promise<string> {
+    const repo = AppDataSource.getRepository(this.entity)
+    const query = repo
       .createQueryBuilder("ent")
       .select(`ent.${sh}`, "no_sh")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy(`ent.${sh}`)
       .orderBy("COUNT(*)", "DESC")
-      .getRawOne();
-    return result;
+      .getRawOne()
+  
+    return result
   }
-
-  public async getViaByYear(year: number): Promise<{ NO_VIA: string; total: number }[]> {
-    const result = await AppDataSource.getRepository(this.entity)
+  
+  public async getViaByYear(year: number, uf?: string): Promise<{ NO_VIA: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.NO_VIA", "NO_VIA")
       .addSelect("COUNT(*)", "total")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy("ent.NO_VIA")
       .orderBy("total", "DESC")
       .take(3)
-      .getRawMany();
-    return result;
+      .getRawMany()
+  
+    return result
   }
-
-  public async getUrfByYear(year: number): Promise<{ NO_URF: string; total: number }[]> {
-    const result = await AppDataSource.getRepository(this.entity)
+  
+  public async getUrfByYear(year: number, uf?: string): Promise<{ NO_URF: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.NO_URF", "NO_URF")
       .addSelect("COUNT(*)", "total")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy("ent.NO_URF")
       .orderBy("total", "DESC")
       .take(3)
-      .getRawMany();
-    return result;
+      .getRawMany()
+  
+    return result
   }
-
-  public async getVlAgregadoByYear(year: number): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlAgregadoByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(VL_AGREGADO)", "total_agregado")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getKgLiquidoByYear(year: number): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getKgLiquidoByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getVlFobByYear(year: number): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlFobByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(VL_FOB)", "total_vl_fob")
       .where("ent.CO_ANO = :year", { year })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getVlAgregadoByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlAgregadoByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(VL_AGREGADO)", "total_agregado")
       .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("ent.CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getKgLiquidoByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getKgLiquidoByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
       .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getVlFobByYearAndProduct(shType: string, year: number, productName: string): Promise<{ CO_MES: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlFobByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(VL_FOB)", "total_vl_fob")
       .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_MES")
       .orderBy("CO_MES", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
+  
   // --- ByYearRange ---
 
   public async getFatByYearRange(startYear: number, endYear: number, uf?: string): Promise<number> {
-    const repo = AppDataSource.getRepository(this.entity);
+    const repo = AppDataSource.getRepository(this.entity)
     const queryBuilder = repo
       .createQueryBuilder("ent")
       .select("ent.CO_FAT_AGREG", "co_fat_agreg")
-      .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear });
+      .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
     if (uf) {
-      queryBuilder.andWhere("ent.SG_UF = :uf", { uf });
+      queryBuilder.andWhere("ent.SG_UF = :uf", { uf })
     }
-    const result = await queryBuilder.groupBy("ent.CO_FAT_AGREG").orderBy("COUNT(*)", "DESC").getRawOne();
-    return result;
+  
+    const result = await queryBuilder.groupBy("ent.CO_FAT_AGREG").orderBy("COUNT(*)", "DESC").getRawOne()
+    return result
   }
-
-  public async getProductByYearRange(sh: string, startYear: number, endYear: number): Promise<string> {
-    const repo = AppDataSource.getRepository(this.entity);
-    const result = await repo
+  
+  public async getProductByYearRange(sh: string, startYear: number, endYear: number, uf?: string): Promise<string> {
+    const repo = AppDataSource.getRepository(this.entity)
+    const query = repo
       .createQueryBuilder("ent")
       .select(`ent.${sh}`, "no_sh")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy(`ent.${sh}`)
       .orderBy("COUNT(*)", "DESC")
-      .getRawOne();
-
-    return result;
+      .getRawOne()
+  
+    return result
   }
-
-  public async getViaByYearRange(startYear: number, endYear: number): Promise<{ NO_VIA: string; total: number }[]> {
-    const result = await AppDataSource.getRepository(this.entity)
+  
+  public async getViaByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ NO_VIA: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.NO_VIA", "NO_VIA")
       .addSelect("COUNT(*)", "total")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy("ent.NO_VIA")
       .orderBy("total", "DESC")
       .take(3)
-      .getRawMany();
-    return result;
+      .getRawMany()
+  
+    return result
   }
-
-  public async getUrfByYearRange(startYear: number, endYear: number): Promise<{ NO_URF: string; total: number }[]> {
-    const result = await AppDataSource.getRepository(this.entity)
+  
+  public async getUrfByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ NO_URF: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.NO_URF", "NO_URF")
       .addSelect("COUNT(*)", "total")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    const result = await query
       .groupBy("ent.NO_URF")
       .orderBy("total", "DESC")
       .take(3)
-      .getRawMany();
-    return result;
+      .getRawMany()
+  
+    return result
   }
-
-  public async getVlAgregadoByYearRange(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlAgregadoByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(VL_AGREGADO)", "total_agregado")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getVlAgregadoByYearRangeAndProduct(
-    shType: string,
-    startYear: number,
-    endYear: number,
-    productName: string,
-  ): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlAgregadoByYearRangeAndProduct(shType: string, startYear: number, endYear: number, productName: string, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(VL_AGREGADO)", "total_vl_agregado")
-      .where(`ent.CO_ANO BETWEEN :startYear AND :endYear AND ent.${shType} = :productName`, {
-        startYear,
-        endYear,
-        productName,
-      })
+      .where(`ent.CO_ANO BETWEEN :startYear AND :endYear AND ent.${shType} = :productName`, { startYear, endYear, productName })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getKgLiquidoByYearRange(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getKgLiquidoByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
+  
 
   public async getKgLiquidoByYearRangeAndProduct(
     shType: string,
     startYear: number,
     endYear: number,
     productName: string,
+    uf?: string
   ): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
@@ -247,29 +337,42 @@ export default abstract class ComexRepository<T> {
         endYear,
         productName,
       })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
-  public async getVlFobByYearRange(startYear: number, endYear: number): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+  
+  public async getVlFobByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(VL_FOB)", "total_vl_fob")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
+      .getRawMany()
   }
-
+  
   public async getVlFobByYearRangeAndProduct(
     shType: string,
     startYear: number,
     endYear: number,
     productName: string,
+    uf?: string
   ): Promise<{ CO_ANO: string; total: number }[]> {
-    return await AppDataSource.getRepository(this.entity)
+    const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(VL_FOB)", "total_vl_fob")
@@ -278,8 +381,14 @@ export default abstract class ComexRepository<T> {
         endYear,
         productName,
       })
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf })
+    }
+  
+    return await query
       .groupBy("ent.CO_ANO")
       .orderBy("CO_ANO", "ASC")
-      .getRawMany();
-  }
+      .getRawMany()
+  }  
 }
