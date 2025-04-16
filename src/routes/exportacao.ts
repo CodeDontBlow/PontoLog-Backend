@@ -46,4 +46,9 @@ router.get("/vl_fob/:year", exportacaoController.getVlFobByYear("Valor FOB por a
 router.get("/vl_fob/:startYear/:endYear", exportacaoController.getVlFobByYearRange("Valor FOB de ano até ano."));
 router.get("/vl_fob/:sh/:year/:productName", exportacaoController.getVlFobByYearAndProduct("Valor FOB por ano e produto."));
 router.get("/vl_fob/:sh/:startYear/:endYear/:productName", exportacaoController.getVlFobByYearRangeAndProduct("Valor FOB de ano até ano por produto."));
+
+// valores de paises
+router.get("/countries/:year", exportacaoController.getOverallCountriesByYear("Todos os dados dos paises"))
+
+
 export default router;
