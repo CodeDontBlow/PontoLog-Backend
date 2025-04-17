@@ -51,5 +51,6 @@ router.get("/vl_fob/:shType/:startYear/:endYear/:productName", exportacaoControl
 router.get("/countries/:year", exportacaoController.getOverallCountriesByYear("Todos os dados dos paises"))
 router.get("/countries/:startYear/:endYear", exportacaoController.getOverallCountriesByYearRange("Todos os dados dos paises de ano até ano"))
 router.get("/countries/:shType/:year/:productName", exportacaoController.getOverallCountriesByYearAndProduct("Todos os dados dos paises em um ano único e produto"))
+router.get("/countries/:shType/:startYear/:endYear/:productName", exportacaoController.getOverallCountriesByYearRangeAndProduct("Todos os dados dos paises em um ano único e produto"))
 
 export default router;

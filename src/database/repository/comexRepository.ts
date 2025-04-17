@@ -472,4 +472,33 @@ export default abstract class ComexRepository<T> {
   
     return result;
   }
+
+  public async getOverallCountriesByYearRangeAndProduct(
+    startYear: number,
+    endYear: number, 
+    shType: string,
+    productName: string,
+    uf?: string
+  ): Promise<{ NO_PAIS: string; total_registros: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
+      .createQueryBuilder("ent")
+      .select("ent.NO_PAIS", "NO_PAIS")
+      .addSelect("COUNT(*)", "TOTAL_REGISTROS")
+      .addSelect("SUM(ent.VL_AGREGADO)", "TOTAL_VL_AGREGADO")
+      .addSelect("SUM(ent.KG_LIQUIDO)", "TOTAL_KG_LIQUIDO")
+      .where(`ent.CO_ANO BETWEEN :startYear AND :endYear AND ent.${shType} = :productName`, { startYear, endYear, productName });
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf });
+    }
+  
+    const result = await query
+      .groupBy("ent.NO_PAIS")
+      .addGroupBy("ent.CO_ANO")
+      .orderBy("total_registros", "DESC")
+      .addOrderBy("ent.NO_PAIS", "DESC")
+      .getRawMany();
+  
+    return result;
+  }
 }

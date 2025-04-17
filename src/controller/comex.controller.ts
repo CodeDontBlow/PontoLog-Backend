@@ -199,4 +199,12 @@ export default abstract class ComexController<T> {
         const data = await this.repository.getOverallCountriesByYearAndProduct(Number(year), shType, productName, uf);
         new SuccessResponse(message, data).send(res);
       });
+
+    getOverallCountriesByYearRangeAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { startYear, endYear, shType, productName} = req.params;
+        const uf = req.query.uf as string;
+        const data = await this.repository.getOverallCountriesByYearRangeAndProduct(Number(startYear), Number(endYear), shType, productName, uf);
+        new SuccessResponse(message, data).send(res);
+      });
 }    
