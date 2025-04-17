@@ -418,5 +418,58 @@ export default abstract class ComexRepository<T> {
     return result;
   }
   
+  public async getOverallCountriesByYearRange(
+    startYear: number, 
+    endYear: number,
+    uf?: string
+  ): Promise<{ NO_PAIS: string; total_registros: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
+      .createQueryBuilder("ent")
+      .select("ent.NO_PAIS", "NO_PAIS")
+      .addSelect("COUNT(*)", "TOTAL_REGISTROS")
+      .addSelect("SUM(ent.VL_AGREGADO)", "TOTAL_VL_AGREGADO")
+      .addSelect("SUM(ent.KG_LIQUIDO)", "TOTAL_KG_LIQUIDO")
+      .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear });
   
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf });
+    }
+  
+    const result = await query
+      .groupBy("ent.NO_PAIS")
+      .addGroupBy("ent.CO_ANO")
+      .orderBy("total_registros", "DESC")
+      .addOrderBy("ent.NO_PAIS", "DESC")
+      .getRawMany();
+  
+    return result;
+  }
+
+  public async getOverallCountriesByYearAndProduct(
+    year: number, 
+    shType: string,
+    productName: string,
+    uf?: string
+  ): Promise<{ NO_PAIS: string; total_registros: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
+      .createQueryBuilder("ent")
+      .select("ent.NO_PAIS", "NO_PAIS")
+      .addSelect("COUNT(*)", "TOTAL_REGISTROS")
+      .addSelect("SUM(ent.VL_AGREGADO)", "TOTAL_VL_AGREGADO")
+      .addSelect("SUM(ent.KG_LIQUIDO)", "TOTAL_KG_LIQUIDO")
+      .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf });
+    }
+  
+    const result = await query
+      .groupBy("ent.NO_PAIS")
+      .addGroupBy("ent.CO_ANO")
+      .orderBy("total_registros", "DESC")
+      .addOrderBy("ent.NO_PAIS", "DESC")
+      .getRawMany();
+  
+    return result;
+  }
 }
