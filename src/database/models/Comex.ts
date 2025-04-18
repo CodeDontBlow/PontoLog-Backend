@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Index } from "typeorm";
 
-export default abstract class ComexBase {
+export default abstract class Comex {
   @PrimaryGeneratedColumn({ name: "ID" })
   readonly id: number;
 
