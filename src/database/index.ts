@@ -3,6 +3,7 @@ import { db } from "../config";
 import { Exportacao } from "./models/Exportacao";
 import { Importacao } from "./models/Importacao";
 import { ExpRes } from "./models/ExpRes";
+import BalancoComercial from "./models/BalancoComercial"; 
 
 const AppDataSource = new DataSource({
   type: "mysql",
@@ -11,7 +12,7 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [Exportacao, Importacao, ExpRes],
+  entities: [Exportacao, Importacao,BalancoComercial , ExpRes],
   synchronize: false,
   logging: true,
 });
