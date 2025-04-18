@@ -46,4 +46,12 @@ router.get("/vl_fob/:year", importacaoController.getVlFobByYear("Valor FOB por a
 router.get("/vl_fob/:startYear/:endYear", importacaoController.getVlFobByYearRange("Valor FOB de ano até ano."));
 router.get("/vl_fob/:sh/:year/:productName", importacaoController.getVlFobByYearAndProduct("Valor FOB por ano e produto."));
 router.get("/vl_fob/:sh/:startYear/:endYear/:productName", importacaoController.getVlFobByYearRangeAndProduct("Valor FOB de ano até ano por produto."));
+
+// valores de paises
+router.get("/countries/:year", importacaoController.getOverallCountriesByYear("Todos os dados dos paises"))
+router.get("/countries/:startYear/:endYear", importacaoController.getOverallCountriesByYearRange("Todos os dados dos paises de ano até ano"))
+router.get("/countries/:shType/:year/:productName", importacaoController.getOverallCountriesByYearAndProduct("Todos os dados dos paises em um ano único e produto"))
+router.get("/countries/:shType/:startYear/:endYear/:productName", importacaoController.getOverallCountriesByYearRangeAndProduct("Todos os dados dos paises em um ano único e produto"))
+
+
 export default router;

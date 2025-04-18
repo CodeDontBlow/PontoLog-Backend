@@ -175,4 +175,20 @@ export default abstract class ComexController<T> {
       const data = await this.repository.getVlFobByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf);
       new SuccessResponse(message, data).send(res);
     });
+
+  getOverallCountriesByYear = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { year } = req.params;
+      const uf = req.query.uf as string;
+      const data = await this.repository.getOverallCountriesByYear(Number(year), uf);
+      new SuccessResponse(message, data).send(res);
+    });
+
+  getOverallCountriesByYearRange = (message: string) =>
+    asyncHandler(async (req, res) => {
+      const { startYear, endYear } = req.params;
+      const uf = req.query.uf as string;
+      const data = await this.repository.getOverallCountriesByYearRange(Number(startYear), Number(endYear), uf);
+      new SuccessResponse(message, data).send(res);
+    });
 }
