@@ -75,89 +75,117 @@ export default abstract class ComexRepository<T> {
     return result;
   }
 
-  public async getVlAgregadoByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
+
+  // adicionando argumento para teste de regiao
+  public async getVlAgregadoByYear(year: number, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_MES", "CO_MES")
       .addSelect("SUM(VL_AGREGADO)", "total_agregado")
       .where("ent.CO_ANO = :year", { year });
+      
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", {region})
+    }
 
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
+
 
     return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
   }
 
-  public async getKgLiquidoByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
-    const query = AppDataSource.getRepository(this.entity)
-      .createQueryBuilder("ent")
-      .select("ent.CO_MES", "CO_MES")
-      .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
-      .where("ent.CO_ANO = :year", { year });
+  public async getKgLiquidoByYear(year: number, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
+  const query = AppDataSource.getRepository(this.entity)
+    .createQueryBuilder("ent")
+    .select("ent.CO_MES", "CO_MES")
+    .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
+    .where("ent.CO_ANO = :year", { year });
 
-    if (uf) {
-      query.andWhere("ent.SG_UF = :uf", { uf });
-    }
-
-    return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+  if (uf) {
+    query.andWhere("ent.SG_UF = :uf", { uf });
   }
 
-  public async getVlFobByYear(year: number, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
-    const query = AppDataSource.getRepository(this.entity)
-      .createQueryBuilder("ent")
-      .select("ent.CO_MES", "CO_MES")
-      .addSelect("SUM(VL_FOB)", "total_vl_fob")
-      .where("ent.CO_ANO = :year", { year });
-
-    if (uf) {
-      query.andWhere("ent.SG_UF = :uf", { uf });
-    }
-
-    return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+  if (region) {
+    query.andWhere("ent.NO_REGIAO = :region", { region });
   }
 
-  public async getVlAgregadoByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
-    const query = AppDataSource.getRepository(this.entity)
-      .createQueryBuilder("ent")
-      .select("ent.CO_MES", "CO_MES")
-      .addSelect("SUM(VL_AGREGADO)", "total_agregado")
-      .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
+  return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+}
 
-    if (uf) {
-      query.andWhere("ent.SG_UF = :uf", { uf });
-    }
+public async getVlFobByYear(year: number, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
+  const query = AppDataSource.getRepository(this.entity)
+    .createQueryBuilder("ent")
+    .select("ent.CO_MES", "CO_MES")
+    .addSelect("SUM(VL_FOB)", "total_vl_fob")
+    .where("ent.CO_ANO = :year", { year });
 
-    return await query.groupBy("ent.CO_MES").orderBy("ent.CO_MES", "ASC").getRawMany();
+  if (uf) {
+    query.andWhere("ent.SG_UF = :uf", { uf });
   }
 
-  public async getKgLiquidoByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
-    const query = AppDataSource.getRepository(this.entity)
-      .createQueryBuilder("ent")
-      .select("ent.CO_MES", "CO_MES")
-      .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
-      .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
-
-    if (uf) {
-      query.andWhere("ent.SG_UF = :uf", { uf });
-    }
-
-    return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+  if (region) {
+    query.andWhere("ent.NO_REGIAO = :region", { region });
   }
 
-  public async getVlFobByYearAndProduct(shType: string, year: number, productName: string, uf?: string): Promise<{ CO_MES: string; total: number }[]> {
-    const query = AppDataSource.getRepository(this.entity)
-      .createQueryBuilder("ent")
-      .select("ent.CO_MES", "CO_MES")
-      .addSelect("SUM(VL_FOB)", "total_vl_fob")
-      .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
+  return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+}
 
-    if (uf) {
-      query.andWhere("ent.SG_UF = :uf", { uf });
-    }
+public async getVlAgregadoByYearAndProduct(shType: string, year: number, productName: string, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
+  const query = AppDataSource.getRepository(this.entity)
+    .createQueryBuilder("ent")
+    .select("ent.CO_MES", "CO_MES")
+    .addSelect("SUM(VL_AGREGADO)", "total_agregado")
+    .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
 
-    return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+  if (uf) {
+    query.andWhere("ent.SG_UF = :uf", { uf });
   }
+
+  if (region) {
+    query.andWhere("ent.NO_REGIAO = :region", { region });
+  }
+
+  return await query.groupBy("ent.CO_MES").orderBy("ent.CO_MES", "ASC").getRawMany();
+}
+
+public async getKgLiquidoByYearAndProduct(shType: string, year: number, productName: string, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
+  const query = AppDataSource.getRepository(this.entity)
+    .createQueryBuilder("ent")
+    .select("ent.CO_MES", "CO_MES")
+    .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
+    .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
+
+  if (uf) {
+    query.andWhere("ent.SG_UF = :uf", { uf });
+  }
+
+  if (region) {
+    query.andWhere("ent.NO_REGIAO = :region", { region });
+  }
+
+  return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+}
+
+public async getVlFobByYearAndProduct(shType: string, year: number, productName: string, uf?: string, region?: string): Promise<{ CO_MES: string; total: number }[]> {
+  const query = AppDataSource.getRepository(this.entity)
+    .createQueryBuilder("ent")
+    .select("ent.CO_MES", "CO_MES")
+    .addSelect("SUM(VL_FOB)", "total_vl_fob")
+    .where(`ent.CO_ANO = :year AND ent.${shType} = :productName`, { year, productName });
+
+  if (uf) {
+    query.andWhere("ent.SG_UF = :uf", { uf });
+  }
+
+  if (region) {
+    query.andWhere("ent.NO_REGIAO = :region", { region });
+  }
+
+  return await query.groupBy("ent.CO_MES").orderBy("CO_MES", "ASC").getRawMany();
+}
+
 
   // --- ByYearRange ---
   public async getFatByYearRange(startYear: number, endYear: number, uf?: string): Promise<number> {
@@ -220,26 +248,31 @@ export default abstract class ComexRepository<T> {
     return result;
   }
 
-  public async getVlAgregadoByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+  public async getVlAgregadoByYearRange(startYear: number, endYear: number, uf?: string, region?: string): Promise<{ CO_ANO: string; total: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(ent.VL_AGREGADO)", "total_agregado")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear });
-
+  
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
-
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
     return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
+  
   public async getVlAgregadoByYearRangeAndProduct(
     shType: string,
     startYear: number,
     endYear: number,
     productName: string,
     uf?: string,
+    region?: string,
   ): Promise<{ CO_ANO: string; total_vl_agregado: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -250,34 +283,43 @@ export default abstract class ComexRepository<T> {
         endYear,
         productName,
       });
-
+  
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
-
-    return await query.groupBy("ent.CO_ANO").orderBy("ent.CO_ANO", "ASC").getRawMany();
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
+    return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
-  public async getKgLiquidoByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+  
+  public async getKgLiquidoByYearRange(startYear: number, endYear: number, uf?: string, region?: string): Promise<{ CO_ANO: string; total: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(KG_LIQUIDO)", "total_kg_liquido")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear });
-
+  
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
-
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
     return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
+  
   public async getKgLiquidoByYearRangeAndProduct(
     shType: string,
     startYear: number,
     endYear: number,
     productName: string,
     uf?: string,
+    region?: string,
   ): Promise<{ CO_ANO: string; total: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -288,54 +330,65 @@ export default abstract class ComexRepository<T> {
         endYear,
         productName,
       });
-
+  
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
-
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
     return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
-  public async getVlFobByYearRange(startYear: number, endYear: number, uf?: string): Promise<{ CO_ANO: string; total: number }[]> {
+  
+  public async getVlFobByYearRange(startYear: number, endYear: number, uf?: string, region?: string): Promise<{ CO_ANO: string; total: number }[]> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
       .select("ent.CO_ANO", "CO_ANO")
       .addSelect("SUM(VL_FOB)", "total_vl_fob")
       .where("ent.CO_ANO BETWEEN :startYear AND :endYear", { startYear, endYear });
-
+  
     if (uf) {
       query.andWhere("ent.SG_UF = :uf", { uf });
     }
-
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
     return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
-public async getVlFobByYearRangeAndProduct(
-  shType: string,
-  startYear: number,
-  endYear: number,
-  productName: string,
-  uf?: string,
-): Promise<{ CO_ANO: string; total: number }[]> {
-  const query = AppDataSource.getRepository(this.entity)
-    .createQueryBuilder("ent")
-    .select("ent.CO_ANO", "CO_ANO")
-    .addSelect("SUM(VL_FOB)", "total_vl_fob")
-    .where(`ent.CO_ANO BETWEEN :startYear AND :endYear AND ent.${shType} = :productName`, {
-      startYear,
-      endYear,
-      productName,
-    });
-
-  if (uf) {
-    query.andWhere("ent.SG_UF = :uf", { uf });
+  
+  public async getVlFobByYearRangeAndProduct(
+    shType: string,
+    startYear: number,
+    endYear: number,
+    productName: string,
+    uf?: string,
+    region?: string,
+  ): Promise<{ CO_ANO: string; total: number }[]> {
+    const query = AppDataSource.getRepository(this.entity)
+      .createQueryBuilder("ent")
+      .select("ent.CO_ANO", "CO_ANO")
+      .addSelect("SUM(VL_FOB)", "total_vl_fob")
+      .where(`ent.CO_ANO BETWEEN :startYear AND :endYear AND ent.${shType} = :productName`, {
+        startYear,
+        endYear,
+        productName,
+      });
+  
+    if (uf) {
+      query.andWhere("ent.SG_UF = :uf", { uf });
+    }
+  
+    if (region) {
+      query.andWhere("ent.NO_REGIAO = :region", { region });
+    }
+  
+    return await query.groupBy("ent.CO_ANO").orderBy("CO_ANO", "ASC").getRawMany();
   }
-
-  return await query
-    .groupBy("ent.CO_ANO")
-    .orderBy("CO_ANO", "ASC")
-    .getRawMany();
-} 
+  
 
   public async getOverallCountriesByYear(
     year: number, 

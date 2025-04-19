@@ -84,97 +84,110 @@ export default abstract class ComexController<T> {
     asyncHandler(async (req, res) => {
       const { year } = req.params;
       const uf = req.query.uf as string;
-      const data = await this.repository.getVlAgregadoByYear(Number(year), uf);
+      const region = req.query.region as string;
+      const data = await this.repository.getVlAgregadoByYear(Number(year), uf, region);
       new SuccessResponse(message, data).send(res);
     });
 
-  getVlAgregadoByYearRange = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { startYear, endYear } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlAgregadoByYearRange(Number(startYear), Number(endYear), uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlAgregadoByYearAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, year, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlAgregadoByYearAndProduct(shType, Number(year), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlAgregadoByYearRangeAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, startYear, endYear, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlAgregadoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getKgLiquidoByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { year } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getKgLiquidoByYear(Number(year), uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getKgLiquidoByYearRange = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { startYear, endYear } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getKgLiquidoByYearRange(Number(startYear), Number(endYear), uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getKgLiquidoByYearAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, year, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getKgLiquidoByYearAndProduct(shType, Number(year), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getKgLiquidoByYearRangeAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, startYear, endYear, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getKgLiquidoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlFobByYear = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { year } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlFobByYear(Number(year), uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlFobByYearRange = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { startYear, endYear } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlFobByYearRange(Number(startYear), Number(endYear), uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlFobByYearAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, year, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlFobByYearAndProduct(shType, Number(year), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
-
-  getVlFobByYearRangeAndProduct = (message: string) =>
-    asyncHandler(async (req, res) => {
-      const { shType, startYear, endYear, productName } = req.params;
-      const uf = req.query.uf as string;
-      const data = await this.repository.getVlFobByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf);
-      new SuccessResponse(message, data).send(res);
-    });
+    getVlAgregadoByYearRange = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { startYear, endYear } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string;  
+        const data = await this.repository.getVlAgregadoByYearRange(Number(startYear), Number(endYear), uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlAgregadoByYearAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, year, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getVlAgregadoByYearAndProduct(shType, Number(year), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlAgregadoByYearRangeAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, startYear, endYear, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string;  
+        const data = await this.repository.getVlAgregadoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getKgLiquidoByYear = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { year } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getKgLiquidoByYear(Number(year), uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getKgLiquidoByYearRange = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { startYear, endYear } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getKgLiquidoByYearRange(Number(startYear), Number(endYear), uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getKgLiquidoByYearAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, year, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getKgLiquidoByYearAndProduct(shType, Number(year), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getKgLiquidoByYearRangeAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, startYear, endYear, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string;  
+        const data = await this.repository.getKgLiquidoByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlFobByYear = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { year } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getVlFobByYear(Number(year), uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlFobByYearRange = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { startYear, endYear } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string;  
+        const data = await this.repository.getVlFobByYearRange(Number(startYear), Number(endYear), uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlFobByYearAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, year, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string; 
+        const data = await this.repository.getVlFobByYearAndProduct(shType, Number(year), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
+    getVlFobByYearRangeAndProduct = (message: string) =>
+      asyncHandler(async (req, res) => {
+        const { shType, startYear, endYear, productName } = req.params;
+        const uf = req.query.uf as string;
+        const region = req.query.region as string;  
+        const data = await this.repository.getVlFobByYearRangeAndProduct(shType, Number(startYear), Number(endYear), productName, uf, region);
+        new SuccessResponse(message, data).send(res);
+      });
+    
 
   getOverallCountriesByYear = (message: string) =>
     asyncHandler(async (req, res) => {
