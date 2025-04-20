@@ -6,8 +6,17 @@ const router = express.Router();
 const balancoController = new BalancoComerController();
 
 
-//Pesquisar balanco comercial
+//Pesquisar balanco comercial por ano
 router.get("/balanco_comercial/:year", balancoController.getBalancoComercialByYear("Balanço comercial por ano."));
 
+//Pesquisar balanco comercial pelo mês
+router.get("/balanco_comercial/mes/:month", balancoController.getBalancoComercialByMonth("Balanço comercial por mês."));
+
+//Pesquisar balanco comercial de um ano a outro
+router.get("/balanco_comercial/:startYear/:endYear", balancoController.getBalancoComercialByYearRange("Balanço comercial de um ano a outro."));
+
+
+//Pesquisar balanco comercial de um mês a outro
+router.get("/balanco_comercial/mes/:startMonth/:endMonth", balancoController.getBalancoComercialByMonthRange("Balanço comercial de um ano a outro."));
 
 export default router;
