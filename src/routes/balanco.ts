@@ -17,6 +17,6 @@ router.get("/balanco_comercial/:startYear/:endYear", balancoController.getBalanc
 
 
 //Pesquisar balanco comercial de um mês a outro
-router.get("/balanco_comercial/mes/:startMonth/:endMonth", balancoController.getBalancoComercialByMonthRange("Balanço comercial de um ano a outro."));
+router.get("/balanco_comercial/mes/:year/:startMonth/:endMonth", balancoController.getBalancoComercialByMonthRange("Balanço comercial de um ano a outro de um determinado ano"));
 
 export default router;

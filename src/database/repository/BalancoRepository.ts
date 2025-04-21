@@ -54,12 +54,13 @@ export default class BalancoRepository{
       return result?.balanca_comercial ?? 0;
     }
 
-    public async getBalancoComercialByMonthRange(startMonth: number, endMonth: number,uf?: string): Promise<number> {
+    public async getBalancoComercialByMonthRange(year: number, startMonth: number, endMonth: number, uf?: string): Promise<number> {
       const repo = AppDataSource.getRepository(this.entity);
       const queryBuilder = repo
         .createQueryBuilder("ent")
         .select("ent.BALANCA_COMERCIAL", "balanca_comercial")
-        .where("ent.mes BETWEEN :startMonth AND :endMonth", { startMonth, endMonth });
+        .where("ent.mes BETWEEN :startMonth AND :endMonth", { startMonth, endMonth })
+        .andWhere("ent.ano = :year", {year});
   
       if (uf) {
         queryBuilder.andWhere("ent.siglaUf = :uf", { uf });
