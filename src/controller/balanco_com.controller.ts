@@ -43,9 +43,23 @@ export default class BalancoComerController{
           const { year, startMonth, endMonth } = req.params;
           const uf = req.query.uf as string;
       
-          const data = await this.repository.getBalancoComercialByMonthRange(Number(year), Number(startMonth), Number(endMonth), uf);
+          const rawData = await this.repository.getBalancoComercialByMonthRange(
+            Number(year),
+            Number(startMonth),
+            Number(endMonth),
+            uf
+          );
+      
+          
+          const data = {
+            [year]: rawData.reduce((acc, item) => {
+              acc[item.mes] = Number(item.balanca_comercial);
+              return acc;
+            }, {} as Record<number, number>)
+          };
       
           new SuccessResponse(message, data).send(res);
         });
+      
       
 }
