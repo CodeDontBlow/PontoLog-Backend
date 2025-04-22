@@ -54,20 +54,33 @@ export default class BalancoRepository{
       return result?.balanca_comercial ?? 0;
     }
 
-    public async getBalancoComercialByMonthRange(year: number, startMonth: number, endMonth: number, uf?: string): Promise<number> {
+    public async getBalancoComercialByMonthRange(
+      year: number,
+      startMonth: number,
+      endMonth: number,
+      uf?: string
+    ): Promise<{ mes: number, balanca_comercial: number }[]> {
       const repo = AppDataSource.getRepository(this.entity);
+    
       const queryBuilder = repo
         .createQueryBuilder("ent")
-        .select("ent.BALANCA_COMERCIAL", "balanca_comercial")
+        .select("ent.mes", "mes")
+        .addSelect("SUM(ent.BALANCA_COMERCIAL)", "balanca_comercial")
         .where("ent.mes BETWEEN :startMonth AND :endMonth", { startMonth, endMonth })
-        .andWhere("ent.ano = :year", {year});
-  
+        .andWhere("ent.ano = :year", { year });
+    
       if (uf) {
         queryBuilder.andWhere("ent.siglaUf = :uf", { uf });
       }
-  
-      const result = await queryBuilder.getRawOne();
-      return result;
+    
+      queryBuilder.groupBy("ent.mes").orderBy("ent.mes");
+    
+      const result = await queryBuilder.getRawMany();
+      return result.map(item => ({
+        mes: Number(item.mes),
+        balanca_comercial: Number(item.balanca_comercial),
+      }));
     }
+    
     
 }
