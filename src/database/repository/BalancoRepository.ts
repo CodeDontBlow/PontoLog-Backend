@@ -9,12 +9,11 @@ export default class BalancoRepository{
     constructor(entity: EntityTarget<BalancoComercial>) {
       this.entity = entity;
     }
-
     
     public async getBalancoComercialByYear(startYear: number, uf?: string): Promise<number> {
       const repo = AppDataSource.getRepository(this.entity);
       const queryBuilder = repo.createQueryBuilder("ent")
-        .select("SUM(ent.balanca_comercial)", "balanca_comercial") // ou AVG, MAX etc.
+        .select("SUM(ent.BALANCA_COMERCIAL)", "balanca_comercial") // ou AVG, MAX etc.
         .where("ent.ano = :startYear", { startYear });
     
       if (uf) {
@@ -24,4 +23,64 @@ export default class BalancoRepository{
       const result = await queryBuilder.getRawOne();
       return result?.balanca_comercial ?? 0;
     }
+
+    public async getBalancoComercialByYearRange(startYear: number, endYear: number, uf?: string): Promise<number> {
+      const repo = AppDataSource.getRepository(this.entity);
+      const queryBuilder = repo
+        .createQueryBuilder("ent")
+        .select("ent.BALANCA_COMERCIAL", "balanca_comercial")
+        .where("ent.ano BETWEEN :startYear AND :endYear", { startYear, endYear });
+  
+      if (uf) {
+        queryBuilder.andWhere("ent.siglaUf = :uf", { uf });
+      }
+  
+      const result = await queryBuilder.getRawOne();
+      return result;
+    }
+
+
+    public async getBalancoComercialByMonth(startMonth: number, uf?: string): Promise<number> {
+      const repo = AppDataSource.getRepository(this.entity);
+      const queryBuilder = repo.createQueryBuilder("ent")
+        .select("SUM(ent.BALANCA_COMERCIAL)", "balanca_comercial")
+        .where("ent.CO_MES = :startMonth", { startMonth });
+    
+      if (uf) {
+        queryBuilder.andWhere("ent.SG_UF = :uf", { uf });
+      }
+    
+      const result = await queryBuilder.getRawOne();
+      return result?.balanca_comercial ?? 0;
+    }
+
+    public async getBalancoComercialByMonthRange(
+      year: number,
+      startMonth: number,
+      endMonth: number,
+      uf?: string
+    ): Promise<{ mes: number, balanca_comercial: number }[]> {
+      const repo = AppDataSource.getRepository(this.entity);
+    
+      const queryBuilder = repo
+        .createQueryBuilder("ent")
+        .select("ent.mes", "mes")
+        .addSelect("SUM(ent.BALANCA_COMERCIAL)", "balanca_comercial")
+        .where("ent.mes BETWEEN :startMonth AND :endMonth", { startMonth, endMonth })
+        .andWhere("ent.ano = :year", { year });
+    
+      if (uf) {
+        queryBuilder.andWhere("ent.siglaUf = :uf", { uf });
+      }
+    
+      queryBuilder.groupBy("ent.mes").orderBy("ent.mes");
+    
+      const result = await queryBuilder.getRawMany();
+      return result.map(item => ({
+        mes: Number(item.mes),
+        balanca_comercial: Number(item.balanca_comercial),
+      }));
+    }
+    
+    
 }
