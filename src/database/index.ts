@@ -1,19 +1,21 @@
 import { DataSource } from "typeorm";
 import { db } from "../config";
-import { Exportacao } from "./models/Exportacao";
-import { Importacao } from "./models/Importacao";
-import { ExpRes } from "./models/ExpRes";
-import { ImpRes } from "./models/ImpRes";
-import BalancoComercial from "./models/BalancoComercial"; 
+import FatoExportacao from "./models/fatoExportacao";
+import DimPais from "./models/dimPais";
+import DimRegiao from "./models/dimRegiao";
+import DimSh from "./models/dimSh";
+import DimUf from "./models/dimUf";
+import DimVia from "./models/dimVia";
+import DimUrf from "./models/dimUrf";
 
 const AppDataSource = new DataSource({
-  type: "mysql",
+  type: "postgres",
   host: db.host,
   port: db.port,
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [Exportacao, Importacao, BalancoComercial, ExpRes, ImpRes],
+  entities: [FatoExportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia],
   synchronize: false,
   logging: true,
 });
