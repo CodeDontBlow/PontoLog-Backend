@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { db } from "../config";
 import FatoExportacao from "./models/fatoExportacao";
+import FatoImportacao from "./models/fatoImportacao";
 import DimPais from "./models/dimPais";
 import DimRegiao from "./models/dimRegiao";
 import DimSh from "./models/dimSh";
@@ -15,7 +16,7 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [FatoExportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia],
+  entities: [FatoExportacao, FatoImportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia],
   synchronize: false,
   logging: true,
 });

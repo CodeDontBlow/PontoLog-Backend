@@ -1,5 +1,5 @@
 import express from "express";
-import FatoImportacaoController from "../controller/fato.exportacao.controller";
+import FatoImportacaoController from "../controller/fato.importacao.controller";
 
 const router = express.Router();
 const fatoImportacaoController = new FatoImportacaoController();
@@ -24,3 +24,5 @@ router.get("/kg_liquido/:year", fatoImportacaoController.getKgLiquido("Kg líqui
 
 // vl fob - /model/vl_fob/:year?endYear=2025&uf=SP&sh=no_sh4_por&productName=...
 router.get("/vl_fob/:year", fatoImportacaoController.getVlFob("Valor FOB por ano."));
+
+export default router
