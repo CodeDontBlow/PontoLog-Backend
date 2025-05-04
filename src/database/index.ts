@@ -8,6 +8,7 @@ import DimSh from "./models/dimSh";
 import DimUf from "./models/dimUf";
 import DimVia from "./models/dimVia";
 import DimUrf from "./models/dimUrf";
+import Balanca from "./models/balanca"
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,7 +17,7 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [FatoExportacao, FatoImportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia],
+  entities: [FatoExportacao, FatoImportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia, Balanca],
   synchronize: false,
   logging: true,
 });
