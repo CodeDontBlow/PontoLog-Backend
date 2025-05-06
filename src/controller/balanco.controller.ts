@@ -13,8 +13,8 @@ export default class BalancaController {
     asyncHandler(async (req, res) => {
       const { year } = req.params;
       const uf = req.query.uf as string;
-      const endYear = req.query.endYear as string
-      const data = await this.repository.getBalancoComercialByYear(Number(year), Number(endYear), uf );
+      const month = req.query.month as string
+      const data = await this.repository.getBalancoComercialByYear(Number(year), Number(month), uf );
       new SuccessResponse(message, data).send(res);
     });
 }

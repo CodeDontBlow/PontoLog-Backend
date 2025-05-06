@@ -88,23 +88,22 @@ export default abstract class FatoRepository<T> {
 
   public async getVlAgregado(
     year: number,
-    endYear?: number,
+    month?: number,
     uf?: string,
     region?: string,
     sh?: string,
     productName?: string,
-  ): Promise<{ CO_MES: string; total: number }[]> {
+  ): Promise<{ total: number }> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
-      .select("ent.co_mes", "CO_MES")
-      .addSelect("SUM(ent.vl_agregado)", "total")
+      .select("SUM(ent.vl_agregado)", "total")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
-      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
-    if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
-    } else {
-      query.andWhere("ent.co_ano = :year", { year });
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+      .where("ent.co_ano = :year", { year });
+      
+    if (month) {
+      query.andWhere("ent.co_mes = :month", { month });
     }
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
@@ -116,34 +115,31 @@ export default abstract class FatoRepository<T> {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
-    const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+    const result = await query.getRawOne();
 
-    return result.map((r) => ({
-      CO_MES: r.CO_MES,
-      total: parseFloat(r.total),
-    }));
+    return result
   }
 
   public async getKgLiquido(
     year: number,
-    endYear?: number,
+    month?: number,
     uf?: string,
     region?: string,
     sh?: string,
     productName?: string,
-  ): Promise<{ CO_MES: string; total: number }[]> {
+  ): Promise<{ total: number }> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
-      .select("ent.co_mes", "CO_MES")
-      .addSelect("SUM(ent.kg_liquido)", "total")
+      .select("SUM(ent.kg_liquido)", "total")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
-      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
-    if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
-    } else {
-      query.andWhere("ent.co_ano = :year", { year });
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+      .where("ent.co_ano = :year", { year });
+    
+    if (month) {
+      query.andWhere("ent.co_mes = :month", { month });
     }
+
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
     }
@@ -154,34 +150,31 @@ export default abstract class FatoRepository<T> {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
-    const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+    const result = await query.getRawOne();
 
-    return result.map((r) => ({
-      CO_MES: r.CO_MES,
-      total: parseFloat(r.total),
-    }));
+    return result
   }
 
   public async getVlFob(
     year: number,
-    endYear?: number,
+    month: number,
     uf?: string,
     region?: string,
     sh?: string,
     productName?: string,
-  ): Promise<{ CO_MES: string; total: number }[]> {
+  ): Promise<{ total: string }> {
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
-      .select("ent.co_mes", "CO_MES")
-      .addSelect("SUM(ent.vl_fob)", "total")
+      .select("SUM(ent.vl_fob)", "total")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
-      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
-    if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
-    } else {
-      query.andWhere("ent.co_ano = :year", { year });
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+      .where("ent.co_ano = :year", { year });
+  
+    if (month) {
+      query.andWhere("ent.co_mes = :month", { month });
     }
+
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
     }
@@ -192,12 +185,9 @@ export default abstract class FatoRepository<T> {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
-    const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+    const result = await query.getRawOne();
 
-    return result.map((r) => ({
-      CO_MES: r.CO_MES,
-      total: parseFloat(r.total),
-    }));
+    return result
   }
 
   public async getOverallCountries(
