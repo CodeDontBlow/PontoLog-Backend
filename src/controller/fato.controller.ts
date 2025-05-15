@@ -48,36 +48,36 @@ export default abstract class FatoController<T> {
   getVlAgregado = (message: string) =>
     asyncHandler(async (req, res) => {
       const { year } = req.params;
-      const endYear = req.query.endYear as string;
+      const month = req.query.month as string;
       const uf = req.query.uf as string;
       const region = req.query.region as string;
       const sh = req.query.sh as string;
       const productName = req.query.productName as string;
-      const data = await this.repository.getVlAgregado(Number(year), Number(endYear), uf, region, sh, productName);
+      const data = await this.repository.getVlAgregado(Number(year), Number(month), uf, region, sh, productName);
       new SuccessResponse(message, data).send(res);
     });
 
   getKgLiquido = (message: string) =>
     asyncHandler(async (req, res) => {
       const { year } = req.params;
-      const endYear = req.query.endYear as string;
+      const month = req.query.month as string;
       const uf = req.query.uf as string;
       const region = req.query.region as string;
       const sh = req.query.sh as string;
       const productName = req.query.productName as string;
-      const data = await this.repository.getKgLiquido(Number(year), Number(endYear), uf, region, sh, productName);
+      const data = await this.repository.getKgLiquido(Number(year), Number(month), uf, region, sh, productName);
       new SuccessResponse(message, data).send(res);
     });
 
   getVlFob = (message: string) =>
     asyncHandler(async (req, res) => {
       const { year } = req.params;
-      const endYear = req.query.endYear as string;
+      const month = req.query.month as string;
       const uf = req.query.uf as string;
       const region = req.query.region as string;
       const sh = req.query.sh as string;
       const productName = req.query.productName as string;
-      const data = await this.repository.getVlFob(Number(year), Number(endYear), uf, region, sh, productName);
+      const data = await this.repository.getVlFob(Number(year), Number(month), uf, region, sh, productName);
       new SuccessResponse(message, data).send(res);
     });
 
