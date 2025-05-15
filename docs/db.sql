@@ -1,6 +1,11 @@
-create database pontolog;
 
--- psql -h <server host> -U <user> -d pontolog 
+-- rodar primeiro o create do database
+create database pontolog;
+-- depois, rodar esse comando com -f para executar todo o código. [!!!Atenção, esse processo demora pois estará populando o bd!!!]
+
+
+-- psql -U postgres -d pontolog -f PontoLog-Backend/docs/db.sql
+
 
 CREATE TABLE fato_exportacao (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -84,74 +89,50 @@ CREATE TABLE balanca_comercial (
 );
 
 
-CREATE INDEX idx_co_uf ON fato_exportacao(co_uf);
+CREATE INDEX idx_co_uf                         ON fato_exportacao(co_uf);
+CREATE INDEX idx_co_ano                        ON fato_exportacao(co_ano);
+CREATE INDEX idx_co_urf                        ON fato_exportacao(co_urf);
+CREATE INDEX idx_co_ano_co_sh6                 ON fato_exportacao(co_ano, co_sh6);
+CREATE INDEX idx_co_ano_fat_agreg              ON fato_exportacao(co_ano, co_fat_agreg);
+CREATE INDEX idx_co_ano_co_via                 ON fato_exportacao(co_ano, co_via);
+CREATE INDEX idx_co_ano_co_uf                  ON fato_exportacao(co_ano, co_uf);
+CREATE INDEX idx_co_ano_co_mes_vl_agregado     ON fato_exportacao(co_ano, co_mes, vl_agregado);
+CREATE INDEX idx_co_ano_co_mes_kg_liquido      ON fato_exportacao(co_ano, co_mes, kg_liquido);
+CREATE INDEX idx_co_ano_co_mes_vl_fob          ON fato_exportacao(co_ano, co_mes, vl_fob);
+CREATE INDEX idx_co_ano_co_mes                 ON fato_exportacao(co_ano, co_mes);
+CREATE INDEX idx_co_ano_co_pais                ON fato_exportacao(co_ano, co_pais);
 
-CREATE INDEX idx_co_ano ON fato_exportacao(co_ano);
-
-CREATE INDEX idx_co_urf ON fato_exportacao(co_urf);
-
-CREATE INDEX idx_co_ano_co_sh6 ON fato_exportacao (co_ano, co_sh6);
-
-CREATE INDEX idx_co_ano_fat_agreg on fato_exportacao (co_ano, co_fat_agreg);
-
-CREATE INDEX idx_co_ano_co_via ON fato_exportacao(co_ano, co_via);
-
-CREATE INDEX idx_co_ano_co_uf ON fato_exportacao(co_ano, co_uf);
-
-CREATE INDEX idx_co_ano_co_mes_vl_agregado ON fato_exportacao(co_ano, co_mes, vl_agregado);
-
-CREATE INDEX idx_co_ano_co_mes_kg_liquido ON fato_exportacao(co_ano, co_mes, kg_liquido);
-
-CREATE INDEX idx_co_ano_co_mes_vl_fob ON fato_exportacao(co_ano, co_mes, vl_fob);
-
-CREATE INDEX idx_co_ano_co_mes ON fato_exportacao(co_ano, co_mes);
-
-CREATE INDEX idx_co_ano_co_pais ON fato_exportacao (co_ano, co_pais);
-
-CREATE INDEX idx_co_uf_imp ON fato_importacao(co_uf);
-CREATE INDEX idx_co_ano_imp ON fato_importacao(co_ano);
-CREATE INDEX idx_co_urf_imp ON fato_importacao(co_urf);
-CREATE INDEX idx_co_ano_co_sh6_imp ON fato_importacao (co_ano, co_sh6);
-CREATE INDEX idx_co_ano_fat_agreg_imp ON fato_importacao (co_ano, co_fat_agreg);
-CREATE INDEX idx_co_ano_co_via_imp ON fato_importacao(co_ano, co_via);
-CREATE INDEX idx_co_ano_co_uf_imp ON fato_importacao(co_ano, co_uf);
+CREATE INDEX idx_co_uf_imp                     ON fato_importacao(co_uf);
+CREATE INDEX idx_co_ano_imp                    ON fato_importacao(co_ano);
+CREATE INDEX idx_co_urf_imp                    ON fato_importacao(co_urf);
+CREATE INDEX idx_co_ano_co_sh6_imp             ON fato_importacao(co_ano, co_sh6);
+CREATE INDEX idx_co_ano_fat_agreg_imp          ON fato_importacao(co_ano, co_fat_agreg);
+CREATE INDEX idx_co_ano_co_via_imp             ON fato_importacao(co_ano, co_via);
+CREATE INDEX idx_co_ano_co_uf_imp              ON fato_importacao(co_ano, co_uf);
 CREATE INDEX idx_co_ano_co_mes_vl_agregado_imp ON fato_importacao(co_ano, co_mes, vl_agregado);
-CREATE INDEX idx_co_ano_co_mes_kg_liquido_imp ON fato_importacao(co_ano, co_mes, kg_liquido);
-CREATE INDEX idx_co_ano_co_mes_vl_fob_imp ON fato_importacao(co_ano, co_mes, vl_fob);
-CREATE INDEX idx_co_ano_co_mes_imp ON fato_importacao(co_ano, co_mes);
-CREATE INDEX idx_co_ano_co_pais_imp ON fato_importacao(co_ano, co_pais);
+CREATE INDEX idx_co_ano_co_mes_kg_liquido_imp  ON fato_importacao(co_ano, co_mes, kg_liquido);
+CREATE INDEX idx_co_ano_co_mes_vl_fob_imp      ON fato_importacao(co_ano, co_mes, vl_fob);
+CREATE INDEX idx_co_ano_co_mes_imp             ON fato_importacao(co_ano, co_mes);
+CREATE INDEX idx_co_ano_co_pais_imp            ON fato_importacao(co_ano, co_pais);
 
-
-CREATE INDEX idx_co_via ON dim_via(co_via);
-
-CREATE INDEX idx_no_via ON dim_via(no_via);
-
-
-CREATE INDEX idx_co_sh6 ON dim_sh (co_sh6);
-
-
-CREATE INDEX idx_sg_uf ON dim_uf(sg_uf);
-
-CREATE INDEX idx_co_uf_sg_uf ON dim_uf(co_uf, sg_uf);
-CREATE INDEX idx_no_urf ON dim_urf(no_urf);
+CREATE INDEX idx_co_via                        ON dim_via(co_via);
+CREATE INDEX idx_no_via                        ON dim_via(no_via);
+CREATE INDEX idx_co_sh6                        ON dim_sh (co_sh6);
+CREATE INDEX idx_sg_uf                         ON dim_uf (sg_uf);
+CREATE INDEX idx_co_uf_sg_uf                   ON dim_uf (co_uf, sg_uf);
+CREATE INDEX idx_no_urf                        ON dim_urf(no_urf);
 
 
 -----------------------------------------------------------
 
-\COPY fato_importacao (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM '/home/ubuntu/fato_importacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY fato_importacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'PontoLog-Backend\docs\dados\fato_imp\fato_importacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY fato_exportacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'PontoLog-Backend\docs\dados\fato_exp\fato_exportacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY balanca_comercial(co_ano, co_mes, sg_uf, balanca_comercial)   FROM 'PontoLog-Backend\docs\dados\balanca_comercial_uf.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_sh           (no_sh6_por, no_sh4_por, no_sh2_por, co_sh6) FROM 'PontoLog-Backend\docs\dados\dim_sh.csv'               WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_regiao       (no_regiao, co_regiao)FROM 'PontoLog-Backend\docs\dados\dim_regiao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_uf           (sg_uf, no_uf, co_uf) FROM 'PontoLog-Backend\docs\dados\dim_uf.csv'     WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_pais         (no_pais, co_pais)    FROM 'PontoLog-Backend\docs\dados\dim_pais.csv'   WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_urf          (no_urf, co_urf)      FROM 'PontoLog-Backend\docs\dados\dim_urf.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_via          (no_via, co_via)      FROM 'PontoLog-Backend\docs\dados\dim_via.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
 
-\COPY fato_exportacao (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM '/home/ubuntu/fato_exportacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
 
-\COPY dim_pais(no_pais,co_pais) FROM '/home/ubuntu/dim_pais.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY dim_regiao(no_regiao,co_regiao) FROM '/home/ubuntu/dim_regiao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY dim_sh(no_sh6_por, no_sh4_por, no_sh2_por, co_sh6) FROM '/home/ubuntu/dim_sh.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY dim_uf(sg_uf, no_uf, co_uf) FROM '/home/ubuntu/dim_uf.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY dim_urf(no_urf, co_urf) FROM '/home/ubuntu/dim_urf.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY dim_via(no_via, co_via) FROM '/home/ubuntu/dim_via.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-
-\COPY balanca_comercial(co_ano, co_mes, sg_uf, balanca_comercial) FROM '/home/ubuntu/balanca_comercial_uf.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
