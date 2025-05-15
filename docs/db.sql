@@ -1,6 +1,6 @@
 
 -- rodar primeiro o create do database
-create database pontolog;
+-- create database pontolog;
 -- depois, rodar esse comando com -f para executar todo o código. [!!!Atenção, esse processo demora pois estará populando o bd!!!]
 
 
@@ -125,14 +125,14 @@ CREATE INDEX idx_no_urf                        ON dim_urf(no_urf);
 
 -----------------------------------------------------------
 
-\COPY fato_importacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'docs\dados\fato_imp\fato_importacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY fato_exportacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'docs\dados\fato_exp\fato_exportacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+-- \COPY fato_importacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'docs\dados\fato_imp\fato_importacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+-- \COPY fato_exportacao  (co_ano, co_mes, kg_liquido, vl_fob, vl_agregado, co_fat_agreg, co_pais, co_via, co_uf, co_regiao, co_urf, co_sh6) FROM 'docs\dados\fato_exp\fato_exportacao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
 \COPY balanca_comercial(co_ano, co_mes, sg_uf, balanca_comercial)   FROM 'docs\dados\balanca_comercial_uf.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_sh           (no_sh6_por, no_sh4_por, no_sh2_por, co_sh6) FROM 'docs\dados\dim_sh.csv'               WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_regiao       (no_regiao, co_regiao)FROM 'docs\dados\dim_regiao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_uf           (sg_uf, no_uf, co_uf) FROM 'docs\dados\dim_uf.csv'     WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_pais         (no_pais, co_pais)    FROM 'docs\dados\dim_pais.csv'   WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_urf          (no_urf, co_urf)      FROM 'docs\dados\dim_urf.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
-\COPY dim_via          (no_via, co_via)      FROM 'docs\dados\dim_via.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_sh           (no_sh6_por, no_sh4_por, no_sh2_por, co_sh6) FROM 'docs\dados\dim_sh.csv'               WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', ENCODING 'UTF8');
+-- \COPY dim_regiao       (no_regiao, co_regiao)FROM 'docs\dados\dim_regiao.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+-- \COPY dim_uf           (sg_uf, no_uf, co_uf) FROM 'docs\dados\dim_uf.csv'     WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+-- \COPY dim_pais         (no_pais, co_pais)    FROM 'docs\dados\dim_pais.csv'   WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
+\COPY dim_urf          (no_urf, co_urf)      FROM 'docs\dados\dim_urf.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', ENCODING 'UTF8');
+-- \COPY dim_via          (no_via, co_via)      FROM 'docs\dados\dim_via.csv'    WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"');
 
 
