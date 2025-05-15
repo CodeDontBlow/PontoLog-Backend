@@ -78,6 +78,11 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+# Ignorar todos os arquivos .csv na pasta docs/dados/
+*.csv
+docs/dados/*.csv
+docs/dados/fato_exp/*.csv
+
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
