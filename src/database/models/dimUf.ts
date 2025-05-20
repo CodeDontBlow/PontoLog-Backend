@@ -15,6 +15,6 @@ export default class DimUf {
   @Column({ name: "co_uf" })
   readonly codigoUf: number;
 
-  @OneToMany(() => FatoExportacao, (fatoExportacao) => fatoExportacao.dimUf) // Relacionamento OneToMany
-  fatoExportacoes: FatoExportacao[]; // Lista de exportações associadas a esse estado
+  @OneToMany(() => FatoExportacao, (fatoExportacao) => fatoExportacao.dimUf)
+  fatoExportacoes: FatoExportacao[];
 }

@@ -8,7 +8,7 @@ import DimSh from "./models/dimSh";
 import DimUf from "./models/dimUf";
 import DimVia from "./models/dimVia";
 import DimUrf from "./models/dimUrf";
-import Balanca from "./models/balanca"
+import Balanca from "./models/balanca";
 
 const AppDataSource = new DataSource({
   type: "postgres",
