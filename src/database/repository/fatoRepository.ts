@@ -204,6 +204,7 @@ export default abstract class FatoRepository<T> {
     year: number,
     endYear?: number,
     uf?: string,
+    region?: string,
     sh?: string,
     productName?: string,
   ): Promise<{ NO_PAIS: string; TOTAL_REGISTROS: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
@@ -215,13 +216,17 @@ export default abstract class FatoRepository<T> {
       .addSelect("SUM(ent.vl_agregado)", "TOTAL_VL_AGREGADO")
       .addSelect("SUM(ent.kg_liquido)", "TOTAL_KG_LIQUIDO")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
-      .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf");
+      .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
-  
+    if (region) {
+      query.andWhere("drg.no_regiao = :region", { region })
+    }
   
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
