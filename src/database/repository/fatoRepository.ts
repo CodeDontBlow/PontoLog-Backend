@@ -1,47 +1,42 @@
 import { EntityTarget } from "typeorm";
 import { AppDataSource } from "..";
-import redisClient from "../../utils/cache";
+import { getCacheKey } from "../../utils/cacheFormat";
+import { redisClient } from "../../cache/index";
 
 export default abstract class FatoRepository<T> {
   private entity: EntityTarget<T>;
+  private readonly seconds: number = 3600;
 
   constructor(entity: EntityTarget<T>) {
     this.entity = entity;
   }
 
-private async getCacheKey(method: string, params: Record<string, any>): Promise<string> {
-  const prefix = 'fatoCache:';
-  const sortedParams = Object.entries(params)
-    .filter(([_, value]) => value !== undefined && value !== null)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}:${JSON.stringify(value)}`)
-    .join("|");
-  return `${prefix}${method}|${sortedParams}`;
-}
-
   public async getFat(year: number, endYear?: number, uf?: string): Promise<number> {
-  const params = { year, endYear, uf };
-  const cacheKey = await this.getCacheKey('getFat', params);
-  const cached = await redisClient.get(cacheKey);
-  if (cached !== null) return Number(cached);
+    const cacheKey = getCacheKey("getFat", { year, endYear, uf });
+    const cached = await redisClient.get(cacheKey);
+    if (cached !== null) return Number(cached);
 
-  const repo = AppDataSource.getRepository(this.entity);
-  const query = repo
-    .createQueryBuilder("ent")
-    .select("ent.co_fat_agreg", "co_fat_agreg")
-    .addSelect("COUNT(ent.co_fat_agreg)", "count")
-    .leftJoin("dim_uf", "du", "ent.co_uf = du.co_uf")
-    .where("ent.co_ano = :year", { year });
+    const repo = AppDataSource.getRepository(this.entity);
+    const query = repo
+      .createQueryBuilder("ent")
+      .select("ent.co_fat_agreg", "co_fat_agreg")
+      .addSelect("COUNT(ent.co_fat_agreg)", "count")
+      .leftJoin("dim_uf", "du", "ent.co_uf = du.co_uf")
+      .where("ent.co_ano = :year", { year });
 
-  if (endYear) query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
-  if (uf) query.andWhere("du.sg_uf = :uf", { uf });
+    if (endYear) query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
+    if (uf) query.andWhere("du.sg_uf = :uf", { uf });
 
-  const result = await query.groupBy("ent.co_fat_agreg").orderBy("count", "DESC").limit(1).getRawOne();
-  await redisClient.setEx(cacheKey, 3600, String(result?.co_fat_agreg));
-  return result?.co_fat_agreg;
-}
+    const result = await query.groupBy("ent.co_fat_agreg").orderBy("count", "DESC").limit(1).getRawOne();
+    await redisClient.setEx(cacheKey, this.seconds, String(result?.co_fat_agreg));
+    return result?.co_fat_agreg;
+  }
 
   public async getProduct(sh: string, year: number, endYear?: number, uf?: string): Promise<string> {
+    const cacheKey = getCacheKey("getProduct", { sh, year, endYear, uf });
+    const cached = await redisClient.get(cacheKey);
+    if (cached !== null) return cached;
+
     const repo = AppDataSource.getRepository(this.entity);
     const query = repo
       .createQueryBuilder("ent")
@@ -58,12 +53,12 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy(`du.${sh}`).orderBy("count", "DESC").getRawOne();
+    await redisClient.setEx(cacheKey, this.seconds, result?.no_sh);
     return result.no_sh;
   }
 
   public async getVia(year: number, endYear?: number, uf?: string): Promise<{ NO_VIA: string; total: number }[]> {
-    const params = { year, endYear, uf };
-    const cacheKey = await this.getCacheKey('getVia', params);
+    const cacheKey = getCacheKey("getVia", { year, endYear, uf });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
 
@@ -82,15 +77,14 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy("du.no_via").orderBy("total", "DESC").limit(3).getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
   }
 
   public async getUrf(year: number, endYear?: number, uf?: string): Promise<{ NO_URF: string; total: number }[]> {
-    const params = { year, endYear, uf };
-    const cacheKey = await this.getCacheKey('getUrf', params);
+    const cacheKey = getCacheKey("getUrf", { year, endYear, uf });
     const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);   
+    if (cached !== null) return JSON.parse(cached);
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -107,7 +101,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy("du.no_urf").orderBy("total", "DESC").limit(3).getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
   }
 
@@ -119,11 +113,9 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const params = { year, endYear, uf, region, sh, productName };
-    const cacheKey = await this.getCacheKey('getVlAgregado', params);
+    const cacheKey = getCacheKey("getVlAgregado", { year, endYear, uf, region, sh, productName });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
-
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -148,7 +140,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -163,8 +155,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const params = { year, endYear, uf, region, sh, productName };
-    const cacheKey = await this.getCacheKey('getKgLiquido', params);
+    const cacheKey = getCacheKey("getKgLiquido", { year, endYear, uf, region, sh, productName });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
 
@@ -191,7 +182,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -206,8 +197,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const params = { year, endYear, uf, region, sh, productName };
-    const cacheKey = await this.getCacheKey('getVlFob', params);
+    const cacheKey = getCacheKey("getVlFob", { year, endYear, uf, region, sh, productName });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
 
@@ -234,7 +224,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -248,8 +238,7 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     sh?: string,
     productName?: string,
   ): Promise<{ NO_PAIS: string; TOTAL_REGISTROS: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
-    const params = { year, endYear, uf, sh, productName };
-    const cacheKey = await this.getCacheKey('getOverallCountries', params);
+    const cacheKey = getCacheKey("getOverallCountries", { year, endYear, uf, sh, productName });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
 
@@ -267,22 +256,21 @@ private async getCacheKey(method: string, params: Record<string, any>): Promise<
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
-  
-  
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
-  
+
     if (sh && productName) {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
-  
+
     const result = await query
       .groupBy("dps.no_pais")
-      .orderBy("COUNT(*)", "DESC") 
+      .orderBy("COUNT(*)", "DESC")
       .addOrderBy("dps.no_pais", "DESC")
       .getRawMany();
-    await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
   }
 }

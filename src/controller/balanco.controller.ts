@@ -6,15 +6,15 @@ export default class BalancaController {
   protected repository: BalancoRepository;
 
   constructor() {
-    this.repository = new BalancoRepository
+    this.repository = new BalancoRepository();
   }
 
   getBalancoComercialByYear = (message: string) =>
     asyncHandler(async (req, res) => {
       const { year } = req.params;
       const uf = req.query.uf as string;
-      const endYear = req.query.endYear as string
-      const data = await this.repository.getBalancoComercialByYear(Number(year), Number(endYear), uf );
+      const endYear = req.query.endYear as string;
+      const data = await this.repository.getBalancoComercialByYear(Number(year), Number(endYear), uf);
       new SuccessResponse(message, data).send(res);
     });
 }

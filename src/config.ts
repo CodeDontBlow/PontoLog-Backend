@@ -8,5 +8,10 @@ export const db = {
   database: process.env.DB_DATABASE,
 };
 
+export const redis = {
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+};
+
 export const port = process.env.PORT;
 export const corsUrl = process.env.CORS_URL;

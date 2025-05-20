@@ -142,3 +142,5 @@ out/
 .DS_Store
 
 .prettierrc
+
+.dump.rdb
