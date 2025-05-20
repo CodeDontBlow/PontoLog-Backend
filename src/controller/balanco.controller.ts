@@ -6,7 +6,7 @@ export default class BalancaController {
   protected repository: BalancoRepository;
 
   constructor() {
-    this.repository = new BalancoRepository
+    this.repository = new BalancoRepository();
   }
 
   getBalancoComercialByYear = (message: string) =>
