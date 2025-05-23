@@ -22,6 +22,8 @@ router.get("/vl_agregado/:year", fatoImportacaoController.getVlAgregado("Valor A
 // kg liquido - /model/kg_liquido/:year?endYear=2025&uf=SP&sh=no_sh4_por&productName=...
 router.get("/kg_liquido/:year", fatoImportacaoController.getKgLiquido("Kg líquido por ano."));
 
+router.get("/countries/:year", fatoImportacaoController.getOverallCountries("todos os dados de países"))
+
 // vl fob - /model/vl_fob/:year?endYear=2025&uf=SP&sh=no_sh4_por&productName=...
 router.get("/vl_fob/:year", fatoImportacaoController.getVlFob("Valor FOB por ano."));
 
