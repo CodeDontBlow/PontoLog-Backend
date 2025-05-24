@@ -1,7 +1,5 @@
-// Code com concorrencia e enumeração
 import { redisClient } from '../cache';
 import { getCacheKey } from './cacheFormat';
-
 import axios from 'axios';
 
 const BASE_URL = 'http://18.204.76.34:3000';
@@ -15,6 +13,11 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
     chunks.push(arr.slice(i, i + size));
   }
   return chunks;
+}
+
+function buildQuery(params: Record<string, any>): string {
+  const query = new URLSearchParams(params).toString();
+  return query ? `?${query}` : '';
 }
 
 export async function preLoadCache(): Promise<void> {
@@ -36,7 +39,7 @@ export async function preLoadCache(): Promise<void> {
     }
   }
 
-  for (let start = START_YEAR; start < END_YEAR; start++) {
+    for (let start = START_YEAR; start < END_YEAR; start++) {
     for (let end = start + 1; end <= END_YEAR; end++) {
       for (const routeFn of routes) {
         urls.push(routeFn(`${start}`, `?endYear=${end}`));
@@ -46,17 +49,23 @@ export async function preLoadCache(): Promise<void> {
 
   const chunks = chunkArray(urls, CONCURRENCY_LIMIT);
 
+  let completed = 0;
+  const total = urls.length;
+
   for (const chunk of chunks) {
-    await Promise.all(chunk.map(url => requestRoute(url)));
+    await Promise.all(chunk.map(async url => {
+      await requestRoute(url);
+      completed++;
+      console.log(`Progress: ${completed}/${total}`);
+    }));
   }
 
   console.log('Preloading completed with controlled concurrency.');
 }
 
-
 async function requestRoute(url: string): Promise<void> {
   const fullUrl = `${BASE_URL}${url}`;
-  const cacheKey = getCacheKey('preload', { url }); // você pode trocar 'preload' por um nome mais específico
+  const cacheKey = getCacheKey('preload', { url });
 
   try {
     const cached = await redisClient.get(cacheKey);
@@ -66,15 +75,13 @@ async function requestRoute(url: string): Promise<void> {
     }
 
     console.log(`Preloading: ${fullUrl}`);
-    await axios.get(fullUrl);
+    await axios.get(fullUrl, { timeout: 1500000 }); 
 
-    // Se quiser guardar apenas o fato de que foi feito, pode ser qualquer valor.
     await redisClient.set(cacheKey, 'ok', {
-      EX: 60 * 60 * 24 * 7, // TTL de 7 dias, por exemplo
+      EX: 60 * 60 * 24 * 7, // 7 dias
     });
 
   } catch (error: any) {
     console.error(`Failed to preload ${fullUrl}:`, error.message || error);
   }
 }
-

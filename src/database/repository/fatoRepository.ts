@@ -1,14 +1,12 @@
 import { EntityTarget } from "typeorm";
 import { AppDataSource } from "..";
-import BalancaRepository from "./balancaRepository";
-import Balanca from "../models/balanca";
 import { getCacheKey } from "../../utils/cacheFormat";
 import { redisClient } from "../../cache/index";
 
 
 export default abstract class FatoRepository<T> {
   private entity: EntityTarget<T>;
-  private readonly seconds: number = 3600;
+  private readonly seconds: number = 360000;
 
   constructor(entity: EntityTarget<T>) {
     this.entity = entity;
@@ -71,14 +69,17 @@ export default abstract class FatoRepository<T> {
       .addSelect("COUNT(du.no_via)", "total")
       .leftJoin("dim_via", "du", "ent.co_via = du.co_via")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.where("ent.co_ano = :year", { year });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
+
     const result = await query.groupBy("du.no_via").orderBy("total", "DESC").limit(3).getRawMany();
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
@@ -95,14 +96,17 @@ export default abstract class FatoRepository<T> {
       .addSelect("COUNT(du.no_urf)", "total")
       .leftJoin("dim_urf", "du", "ent.co_urf = du.co_urf")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
+
     const result = await query.groupBy("du.no_urf").orderBy("total", "DESC").limit(3).getRawMany();
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
@@ -127,23 +131,29 @@ export default abstract class FatoRepository<T> {
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
       .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
+
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
+
     if (sh && productName) {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -169,23 +179,29 @@ export default abstract class FatoRepository<T> {
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
       .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
+
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
+
     if (sh && productName) {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -211,23 +227,29 @@ export default abstract class FatoRepository<T> {
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
       .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
+
     if (region) {
       query.andWhere("drg.no_regiao = :region", { region });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
+
     if (sh && productName) {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
+
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -243,7 +265,7 @@ export default abstract class FatoRepository<T> {
     productName?: string,
   ): Promise<{ NO_PAIS: string; TOTAL_REGISTROS: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
 
-    const cacheKey = getCacheKey("getOverallCountries", { year, endYear, uf, region,sh, productName });
+    const cacheKey = getCacheKey("getOverallCountries", { year, endYear, uf, region, sh, productName });
     const cached = await redisClient.get(cacheKey);
     if (cached !== null) return JSON.parse(cached);
 
@@ -256,23 +278,24 @@ export default abstract class FatoRepository<T> {
       .addSelect("SUM(ent.kg_liquido)", "TOTAL_KG_LIQUIDO")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
-      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
 
     if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear })
+      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
+
     if (region) {
-      query.andWhere("drg.no_regiao = :region", { region })
+      query.andWhere("drg.no_regiao = :region", { region });
     }
 
     if (uf) {
-      query.andWhere("duf.sg_uf = :uf", { uf })
+      query.andWhere("duf.sg_uf = :uf", { uf });
     }
 
     if (sh && productName) {
-      query.andWhere(`dsh.${sh} = :productName`, { productName })
+      query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
     const result = await query
@@ -280,36 +303,37 @@ export default abstract class FatoRepository<T> {
       .orderBy("COUNT(*)", "DESC")
       .addOrderBy("dps.no_pais", "DESC")
       .getRawMany();
+
     await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
     return result;
   }
 
   public async getAllData(params: {
-    year: number,
-    endYear?: number,
-    uf?: string,
-    region?: string,
-    sh?: string,
-    productName?: string,
-    type?: string 
-  }): Promise<any> {
-    const {
-      year,
-      endYear,
-      uf,
-      region,
-      sh,
-      productName,
-    } = params;
+  year: number,
+  endYear?: number,
+  uf?: string,
+  region?: string,
+  sh?: string,
+  productName?: string,
+  type?: string
+}): Promise < any > {
+  const {
+    year,
+    endYear,
+    uf,
+    region,
+    sh,
+    productName,
+  } = params;
 
-    const response: any = {year,endYear,uf,region,sh,productName}
+  const response: any = { year, endYear, uf, region, sh, productName }
 
       response.via = await this.getVia(year, endYear, uf);
-      response.urf = await this.getUrf(year, endYear, uf);
-      response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
-      response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
-      response.vlFob = await this.getVlFob(year, endYear, uf, region, sh, productName);
-      response.overallCountries = await this.getOverallCountries(year, endYear, uf, region, sh, productName);
-      return response
-  }
+  response.urf = await this.getUrf(year, endYear, uf);
+  response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
+  response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
+  response.vlFob = await this.getVlFob(year, endYear, uf, region, sh, productName);
+  response.overallCountries = await this.getOverallCountries(year, endYear, uf, region, sh, productName);
+  return response
+}
 }
