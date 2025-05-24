@@ -4,6 +4,7 @@ import cors from "cors";
 import "./database";
 import { corsUrl } from "./config";
 import { port } from "./config";
+import { preLoadCache } from "./utils/preLoadCache";
 
 const app = express();
 app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
@@ -11,4 +12,5 @@ app.use(router);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
+  preLoadCache()
 });
