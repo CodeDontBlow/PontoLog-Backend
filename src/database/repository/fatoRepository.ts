@@ -204,6 +204,7 @@ export default abstract class FatoRepository<T> {
     year: number,
     endYear?: number,
     uf?: string,
+    region?: string,
     sh?: string,
     productName?: string,
   ): Promise<{ NO_PAIS: string; TOTAL_REGISTROS: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
@@ -238,5 +239,34 @@ export default abstract class FatoRepository<T> {
       .getRawMany();
   
     return result;
+  }
+
+    public async getAllData(params: {
+    year: number,
+    endYear?: number,
+    uf?: string,
+    region?: string,
+    sh?: string,
+    productName?: string,
+    type?: string 
+  }): Promise<any> {
+    const {
+      year,
+      endYear,
+      uf,
+      region,
+      sh,
+      productName,
+    } = params;
+
+    const response: any = {year,endYear,uf,region,sh,productName}
+
+      response.via = await this.getVia(year, endYear, uf);
+      response.urf = await this.getUrf(year, endYear, uf);
+      response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
+      response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
+      response.vlFob = await this.getVlFob(year, endYear, uf, region, sh, productName);
+      response.overallCountries = await this.getOverallCountries(year, endYear, uf, region, sh, productName);
+      return response
   }
 }
