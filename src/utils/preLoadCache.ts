@@ -4,7 +4,7 @@ import { getCacheKey } from './cacheFormat';
 
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://18.204.76.34:3000';
 const START_YEAR = 2014;
 const END_YEAR = 2024;
 const CONCURRENCY_LIMIT = 10;
@@ -30,19 +30,19 @@ export async function preLoadCache(): Promise<void> {
 
   const urls: string[] = [];
 
-  // for (let year = START_YEAR; year <= END_YEAR; year++) {
-  //   for (const routeFn of routes) {
-  //     urls.push(routeFn(`${year}`));
-  //   }
-  // }
+  for (let year = START_YEAR; year <= END_YEAR; year++) {
+    for (const routeFn of routes) {
+      urls.push(routeFn(`${year}`));
+    }
+  }
 
-  // for (let start = START_YEAR; start < END_YEAR; start++) {
-  //   for (let end = start + 1; end <= END_YEAR; end++) {
-  //     for (const routeFn of routes) {
-  //       urls.push(routeFn(`${start}`, `?endYear=${end}`));
-  //     }
-  //   }
-  // }
+  for (let start = START_YEAR; start < END_YEAR; start++) {
+    for (let end = start + 1; end <= END_YEAR; end++) {
+      for (const routeFn of routes) {
+        urls.push(routeFn(`${start}`, `?endYear=${end}`));
+      }
+    }
+  }
 
   const chunks = chunkArray(urls, CONCURRENCY_LIMIT);
 
@@ -78,41 +78,3 @@ async function requestRoute(url: string): Promise<void> {
   }
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
-
-// Code com piores casos fixos: 2014-2023?endYear=2024 e 2014?endYear=2024-2015
-// e anos unicos
-// import axios from 'axios'
-
-// const BASE_URL = 'http://localhost:3000'; // ajuste se necessário
-// const START_YEAR = 2014;
-// const END_YEAR = 2023;
-// const QUERY_BASE = '?endYear=2024';
-
-// export async function preLoadCache(): Promise<void> {
-//   const routes: Array<(year: number) => string> = [
-//     (year) => `/exportacao/fat/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/via/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/urf/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/vl_agregado/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/kg_liquido/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/vl_fob/${year}${QUERY_BASE}`,
-//     (year) => `/exportacao/countries/${year}${QUERY_BASE}`,
-//   ];
-
-//   for (let year = START_YEAR; year <= END_YEAR; year++) {
-//     for (const routeFn of routes) {
-//       const url = `${BASE_URL}${routeFn(year)}`;
-//       try {
-//         console.log(`Preloading: ${url}`);
-//         await axios.get(url);
-//       } catch (error: any) {
-//         console.error(`Failed to preload ${url}:`, error.message || error);
-//       }
-//     }
-//   }
-
-//   console.log('Preloading completed.');
-// }
