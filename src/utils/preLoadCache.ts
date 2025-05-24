@@ -22,13 +22,13 @@ function buildQuery(params: Record<string, any>): string {
 
 export async function preLoadCache(): Promise<void> {
   const routes: Array<(path: string, query?: string) => string> = [
-    (path, query = '') => `/exportacao/fat/${path}${query}`,
-    (path, query = '') => `/exportacao/via/${path}${query}`,
-    (path, query = '') => `/exportacao/urf/${path}${query}`,
-    (path, query = '') => `/exportacao/vl_agregado/${path}${query}`,
-    (path, query = '') => `/exportacao/kg_liquido/${path}${query}`,
-    (path, query = '') => `/exportacao/vl_fob/${path}${query}`,
-    (path, query = '') => `/exportacao/countries/${path}${query}`,
+    (path, query = '') => `/exportacao/fat/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/via/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/urf/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/vl_agregado/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/kg_liquido/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/vl_fob/${path}${query}?sh=no_sh4_por`,
+    (path, query = '') => `/exportacao/countries/${path}${query}?sh=no_sh4_por`,
   ];
 
   const urls: string[] = [];
