@@ -21,31 +21,37 @@ function buildQuery(params: Record<string, any>): string {
 }
 
 export async function preLoadCache(): Promise<void> {
-  const routes: Array<(path: string, query?: string) => string> = [
-    (path, query = '') => `/exportacao/fat/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/via/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/urf/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/vl_agregado/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/kg_liquido/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/vl_fob/${path}${query}?sh=no_sh4_por`,
-    (path, query = '') => `/exportacao/countries/${path}${query}?sh=no_sh4_por`,
-  ];
+const routes: Array<(path: string, query?: string) => string> = [
+  (path, query = '') => `/exportacao/fat/${path}${query}`,
+  (path, query = '') => `/exportacao/via/${path}${query}`,
+  (path, query = '') => `/exportacao/urf/${path}${query}`,
+  (path, query = '') => `/exportacao/vl_agregado/${path}${query}`,
+  (path, query = '') => `/exportacao/kg_liquido/${path}${query}`,
+  (path, query = '') => `/exportacao/vl_fob/${path}${query}`,
+  (path, query = '') => `/exportacao/countries/${path}${query}`,
+];
+
 
   const urls: string[] = [];
 
-  for (let year = START_YEAR; year <= END_YEAR; year++) {
-    for (const routeFn of routes) {
-      urls.push(routeFn(`${year}`));
-    }
+for (let year = START_YEAR; year <= END_YEAR; year++) {
+  for (const routeFn of routes) {
+    // só o parâmetro sh para anos únicos
+    const query = buildQuery({ sh: 'no_sh4_por' });
+    urls.push(routeFn(`${year}`, query));
   }
+}
 
-    for (let start = START_YEAR; start < END_YEAR; start++) {
-    for (let end = start + 1; end <= END_YEAR; end++) {
-      for (const routeFn of routes) {
-        urls.push(routeFn(`${start}`, `?endYear=${end}`));
-      }
+for (let start = START_YEAR; start < END_YEAR; start++) {
+  for (let end = start + 1; end <= END_YEAR; end++) {
+    for (const routeFn of routes) {
+      // sh + endYear para anos compostos
+      const query = buildQuery({ sh: 'no_sh4_por', endYear: end });
+      urls.push(routeFn(`${start}`, query));
     }
   }
+}
+
 
   const chunks = chunkArray(urls, CONCURRENCY_LIMIT);
 
