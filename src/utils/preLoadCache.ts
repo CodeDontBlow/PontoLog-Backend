@@ -42,15 +42,15 @@ for (let year = START_YEAR; year <= END_YEAR; year++) {
   }
 }
 
-// for (let start = START_YEAR; start < END_YEAR; start++) {
-//   for (let end = start + 1; end <= END_YEAR; end++) {
-//     for (const routeFn of routes) {
-//       // sh + endYear para anos compostos
-//       const query = buildQuery({ sh: 'no_sh4_por', endYear: end });
-//       urls.push(routeFn(`${start}`, query));
-//     }
-//   }
-// }
+for (let start = START_YEAR; start < END_YEAR; start++) {
+  for (let end = start + 1; end <= END_YEAR; end++) {
+    for (const routeFn of routes) {
+      // sh + endYear para anos compostos
+      const query = buildQuery({ sh: 'no_sh4_por', endYear: end });
+      urls.push(routeFn(`${start}`, query));
+    }
+  }
+}
 
 
   const chunks = chunkArray(urls, CONCURRENCY_LIMIT);
@@ -84,7 +84,7 @@ async function requestRoute(url: string): Promise<void> {
     await axios.get(fullUrl, { timeout: 1500000 }); 
 
     await redisClient.set(cacheKey, 'ok', {
-      EX: 60 * 60 * 24 * 7, // 7 dias
+      EX: 60 * 60 * 24 * 2, 
     });
 
   } catch (error: any) {

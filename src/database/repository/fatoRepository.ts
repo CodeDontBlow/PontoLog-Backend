@@ -39,23 +39,33 @@ export default abstract class FatoRepository<T> {
     if (cached !== null) return cached;
 
     const repo = AppDataSource.getRepository(this.entity);
+
     const query = repo
       .createQueryBuilder("ent")
       .select(`du.${sh}`, "no_sh")
       .addSelect(`COUNT(du.${sh})`, "count")
       .leftJoin("dim_sh", "du", "ent.co_sh6 = du.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf");
+
     if (endYear) {
       query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.where("ent.co_ano = :year", { year });
     }
+
     if (uf) {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
-    const result = await query.groupBy(`du.${sh}`).orderBy("count", "DESC").getRawOne();
-    await redisClient.setEx(cacheKey, this.seconds, result?.no_sh);
-    return result.no_sh;
+
+    const result = await query
+      .groupBy(`du.${sh}`)
+      .orderBy("count", "DESC")
+      .getRawOne();
+
+    const valueToCache = String(result?.no_sh ?? "");
+    await redisClient.setEx(cacheKey, this.seconds, valueToCache);
+
+    return result?.no_sh ?? "";
   }
 
   public async getVia(year: number, endYear?: number, uf?: string): Promise<{ NO_VIA: string; total: number }[]> {
