@@ -1,8 +1,9 @@
 import { redisClient } from '../cache';
 import { getCacheKey } from './cacheFormat';
 import axios from 'axios';
+import "dotenv/config";
 
-const BASE_URL = 'http://18.204.76.34:3000';
+const BASE_URL = process.env.BASE_URL
 const START_YEAR = 2014;
 const END_YEAR = 2024;
 const CONCURRENCY_LIMIT = 10;
@@ -23,12 +24,11 @@ function buildQuery(params: Record<string, any>): string {
 export async function preLoadCache(): Promise<void> {
 const routes: Array<(path: string, query?: string) => string> = [
   (path, query = '') => `/exportacao/fat/${path}${query}`,
-  (path, query = '') => `/exportacao/via/${path}${query}`,
-  (path, query = '') => `/exportacao/urf/${path}${query}`,
-  (path, query = '') => `/exportacao/vl_agregado/${path}${query}`,
-  (path, query = '') => `/exportacao/kg_liquido/${path}${query}`,
-  (path, query = '') => `/exportacao/vl_fob/${path}${query}`,
-  (path, query = '') => `/exportacao/countries/${path}${query}`,
+  (path, query = '') => `/exportacao/${path}${query}`,
+  (path, query = '') => `/importacao/fat/${path}${query}`,
+  (path, query = '') => `/importacao/${path}${query}`,
+  (path, query = '') => `/balanco/${path}${query}`,
+  
 ];
 
 
