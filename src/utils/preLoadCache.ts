@@ -25,8 +25,10 @@ export async function preLoadCache(): Promise<void> {
 const routes: Array<(path: string, query?: string) => string> = [
   (path, query = '') => `/exportacao/fat/${path}${query}`,
   (path, query = '') => `/exportacao/${path}${query}`,
+  (path, query = '') => `/exportacao/product/no_sh4_por/${path}${query}`,
   (path, query = '') => `/importacao/fat/${path}${query}`,
   (path, query = '') => `/importacao/${path}${query}`,
+  (path, query = '') => `/importacao/product/no_sh4_por/${path}${query}`,
   (path, query = '') => `/balanco/${path}${query}`,
   
 ];
