@@ -338,7 +338,7 @@ export default abstract class FatoRepository<T> {
 
   const response: any = { year, endYear, uf, region, sh, productName }
 
-      response.via = await this.getVia(year, endYear, uf);
+  response.via = await this.getVia(year, endYear, uf);
   response.urf = await this.getUrf(year, endYear, uf);
   response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
   response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
