@@ -1,13 +1,10 @@
 import { AppDataSource } from "..";
 import Balanca from "../models/balanca";
-
-import { redisClient } from "../../cache/index";
-import { getCacheKey } from "../../utils/cacheFormat";
+import { RedisClient } from "..";
+import { getKey } from "../../utils/cacheFormat";
 
 export default class BalancaRepository {
-  private readonly seconds: number = 3600;
-
-  public async getBalancoComercialByYear(
+  public async getBalancoComercial(
     year: number,
     endYear?: number,
     uf?: string,
@@ -15,9 +12,9 @@ export default class BalancaRepository {
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const cacheKey = getCacheKey("getBalancoComercialByYear", { year, endYear, uf, region, sh, productName });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey("Balanca", "getBalancoComercial", { year, endYear, uf, region, sh, productName });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) return JSON.parse(resultCached);
 
     const query = AppDataSource.getRepository(Balanca)
       .createQueryBuilder("ent")
@@ -37,19 +34,14 @@ export default class BalancaRepository {
     if (uf) {
       query.andWhere("ent.sg_uf = :uf", { uf });
     }
-    
+
     if (sh && productName) {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
-    const result = await query
-      .groupBy("ent.co_mes")
-      .orderBy("co_mes", "DESC")
-      .getRawMany();
-
-    
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
-    return result.map((r: { co_mes: string; total: string; }) => ({
+    const result = await query.groupBy("ent.co_mes").orderBy("co_mes", "DESC").getRawMany();
+    await RedisClient.set(key, JSON.stringify(result));
+    return result.map((r: { co_mes: string; total: string }) => ({
       CO_MES: r.co_mes,
       total: parseFloat(r.total),
     }));

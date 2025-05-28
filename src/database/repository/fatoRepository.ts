@@ -1,23 +1,29 @@
 import { EntityTarget } from "typeorm";
 import { AppDataSource } from "..";
-import BalancaRepository from "./balancaRepository";
-import Balanca from "../models/balanca";
-import { getCacheKey } from "../../utils/cacheFormat";
-import { redisClient } from "../../cache/index";
-
+import { getKey } from "../../utils/cacheFormat";
+import { RedisClient } from "..";
 
 export default abstract class FatoRepository<T> {
-  private entity: EntityTarget<T>;
-  private readonly seconds: number = 3600;
+  private readonly entity: EntityTarget<T>;
 
   constructor(entity: EntityTarget<T>) {
     this.entity = entity;
   }
 
+  protected getEntityName(): string {
+    if (typeof this.entity === "string") {
+      return this.entity;
+    } else if (typeof this.entity === "function") {
+      return this.entity.name;
+    } else {
+      throw new Error("Invalid entity type");
+    }
+  }
+
   public async getFat(year: number, endYear?: number, uf?: string): Promise<number> {
-    const cacheKey = getCacheKey("getFat", { year, endYear, uf });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return Number(cached);
+    const key = getKey(this.getEntityName(), "getFat", { year, endYear, uf });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) return Number(resultCached);
 
     const repo = AppDataSource.getRepository(this.entity);
     const query = repo
@@ -31,14 +37,14 @@ export default abstract class FatoRepository<T> {
     if (uf) query.andWhere("du.sg_uf = :uf", { uf });
 
     const result = await query.groupBy("ent.co_fat_agreg").orderBy("count", "DESC").limit(1).getRawOne();
-    await redisClient.setEx(cacheKey, this.seconds, String(result?.co_fat_agreg));
-    return result?.co_fat_agreg;
+    await RedisClient.set(key, result.co_fat_agreg);
+    return Number(result.co_fat_agreg);
   }
 
   public async getProduct(sh: string, year: number, endYear?: number, uf?: string): Promise<string> {
-    const cacheKey = getCacheKey("getProduct", { sh, year, endYear, uf });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return cached;
+    const key = getKey(this.getEntityName(), "getProduct", { sh, year, endYear, uf });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) return resultCached;
 
     const repo = AppDataSource.getRepository(this.entity);
     const query = repo
@@ -56,14 +62,14 @@ export default abstract class FatoRepository<T> {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy(`du.${sh}`).orderBy("count", "DESC").getRawOne();
-    await redisClient.setEx(cacheKey, this.seconds, result?.no_sh);
+    await RedisClient.set(key, result.no_sh);
     return result.no_sh;
   }
 
   public async getVia(year: number, endYear?: number, uf?: string): Promise<{ NO_VIA: string; total: number }[]> {
-    const cacheKey = getCacheKey("getVia", { year, endYear, uf });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getVia", { year, endYear, uf });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) return JSON.parse(resultCached);
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -80,14 +86,14 @@ export default abstract class FatoRepository<T> {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy("du.no_via").orderBy("total", "DESC").limit(3).getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+    await RedisClient.set(key, JSON.stringify(result));
     return result;
   }
 
   public async getUrf(year: number, endYear?: number, uf?: string): Promise<{ NO_URF: string; total: number }[]> {
-    const cacheKey = getCacheKey("getUrf", { year, endYear, uf });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getUrf", { year, endYear, uf });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) return JSON.parse(resultCached);
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -104,7 +110,7 @@ export default abstract class FatoRepository<T> {
       query.andWhere("duf.sg_uf = :uf", { uf });
     }
     const result = await query.groupBy("du.no_urf").orderBy("total", "DESC").limit(3).getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+    await RedisClient.set(key, JSON.stringify(result));
     return result;
   }
 
@@ -116,9 +122,15 @@ export default abstract class FatoRepository<T> {
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const cacheKey = getCacheKey("getVlAgregado", { year, endYear, uf, region, sh, productName });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getVlAgregado", { year, endYear, uf, region, sh, productName });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) {
+      const parsed = JSON.parse(resultCached);
+      return parsed.map((r: any) => ({
+        CO_MES: r.CO_MES,
+        total: parseFloat(r.total),
+      }));
+    }
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -143,7 +155,7 @@ export default abstract class FatoRepository<T> {
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+    await RedisClient.set(key, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -158,9 +170,16 @@ export default abstract class FatoRepository<T> {
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const cacheKey = getCacheKey("getKgLiquido", { year, endYear, uf, region, sh, productName });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getKgLiquido", { year, endYear, uf, region, sh, productName });
+    const resultCached = await RedisClient.get(key);
+
+    if (resultCached !== null) {
+      const parsed = JSON.parse(resultCached);
+      return parsed.map((r: any) => ({
+        CO_MES: r.CO_MES,
+        total: parseFloat(r.total),
+      }));
+    }
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -185,7 +204,7 @@ export default abstract class FatoRepository<T> {
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+    await RedisClient.set(key, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -200,9 +219,16 @@ export default abstract class FatoRepository<T> {
     sh?: string,
     productName?: string,
   ): Promise<{ CO_MES: string; total: number }[]> {
-    const cacheKey = getCacheKey("getVlFob", { year, endYear, uf, region, sh, productName });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getVlFob", { year, endYear, uf, region, sh, productName });
+    const resultCached = await RedisClient.get(key);
+
+    if (resultCached !== null) {
+      const parsed = JSON.parse(resultCached);
+      return parsed.map((r: any) => ({
+        CO_MES: r.CO_MES,
+        total: parseFloat(r.total),
+      }));
+    }
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -227,7 +253,7 @@ export default abstract class FatoRepository<T> {
     }
 
     const result = await query.groupBy("ent.co_mes").orderBy("ent.co_mes", "ASC").getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
+    await RedisClient.set(key, JSON.stringify(result));
     return result.map((r) => ({
       CO_MES: r.CO_MES,
       total: parseFloat(r.total),
@@ -242,10 +268,17 @@ export default abstract class FatoRepository<T> {
     sh?: string,
     productName?: string,
   ): Promise<{ NO_PAIS: string; TOTAL_REGISTROS: number; TOTAL_VL_AGREGADO: number; TOTAL_KG_LIQUIDO: number }[]> {
-
-    const cacheKey = getCacheKey("getOverallCountries", { year, endYear, uf, region,sh, productName });
-    const cached = await redisClient.get(cacheKey);
-    if (cached !== null) return JSON.parse(cached);
+    const key = getKey(this.getEntityName(), "getOverallCountries", { year, endYear, uf, region, sh, productName });
+    const resultCached = await RedisClient.get(key);
+    if (resultCached !== null) {
+      const parsed = JSON.parse(resultCached);
+      return parsed.map((r: any) => ({
+        NO_PAIS: r.NO_PAIS,
+        TOTAL_REGISTROS: parseInt(r.TOTAL_REGISTROS, 10),
+        TOTAL_VL_AGREGADO: parseFloat(r.TOTAL_VL_AGREGADO),
+        TOTAL_KG_LIQUIDO: parseFloat(r.TOTAL_KG_LIQUIDO),
+      }));
+    }
 
     const query = AppDataSource.getRepository(this.entity)
       .createQueryBuilder("ent")
@@ -256,23 +289,23 @@ export default abstract class FatoRepository<T> {
       .addSelect("SUM(ent.kg_liquido)", "TOTAL_KG_LIQUIDO")
       .leftJoin("dim_sh", "dsh", "ent.co_sh6 = dsh.co_sh6")
       .leftJoin("dim_uf", "duf", "ent.co_uf = duf.co_uf")
-      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao")
+      .leftJoin("dim_regiao", "drg", "ent.co_regiao = drg.co_regiao");
 
     if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear })
+      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
     } else {
       query.andWhere("ent.co_ano = :year", { year });
     }
     if (region) {
-      query.andWhere("drg.no_regiao = :region", { region })
+      query.andWhere("drg.no_regiao = :region", { region });
     }
 
     if (uf) {
-      query.andWhere("duf.sg_uf = :uf", { uf })
+      query.andWhere("duf.sg_uf = :uf", { uf });
     }
 
     if (sh && productName) {
-      query.andWhere(`dsh.${sh} = :productName`, { productName })
+      query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
     const result = await query
@@ -280,36 +313,32 @@ export default abstract class FatoRepository<T> {
       .orderBy("COUNT(*)", "DESC")
       .addOrderBy("dps.no_pais", "DESC")
       .getRawMany();
-    await redisClient.setEx(cacheKey, this.seconds, JSON.stringify(result));
-    return result;
+
+    await RedisClient.set(key, JSON.stringify(result));
+    return result.map((r) => ({
+      NO_PAIS: r.NO_PAIS,
+      TOTAL_REGISTROS: parseInt(r.TOTAL_REGISTROS, 10),
+      TOTAL_VL_AGREGADO: parseFloat(r.TOTAL_VL_AGREGADO),
+      TOTAL_KG_LIQUIDO: parseFloat(r.TOTAL_KG_LIQUIDO),
+    }));
   }
 
   public async getAllData(params: {
-    year: number,
-    endYear?: number,
-    uf?: string,
-    region?: string,
-    sh?: string,
-    productName?: string,
-    type?: string 
+    year: number;
+    endYear?: number;
+    uf?: string;
+    region?: string;
+    sh?: string;
+    productName?: string;
   }): Promise<any> {
-    const {
-      year,
-      endYear,
-      uf,
-      region,
-      sh,
-      productName,
-    } = params;
-
-    const response: any = {year,endYear,uf,region,sh,productName}
-
-      response.via = await this.getVia(year, endYear, uf);
-      response.urf = await this.getUrf(year, endYear, uf);
-      response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
-      response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
-      response.vlFob = await this.getVlFob(year, endYear, uf, region, sh, productName);
-      response.overallCountries = await this.getOverallCountries(year, endYear, uf, region, sh, productName);
-      return response
+    const { year, endYear, uf, region, sh, productName } = params;
+    const response: any = { year, endYear, uf, region, sh, productName };
+    response.via = await this.getVia(year, endYear, uf);
+    response.urf = await this.getUrf(year, endYear, uf);
+    response.vlAgregado = await this.getVlAgregado(year, endYear, uf, region, sh, productName);
+    response.kgLiquido = await this.getKgLiquido(year, endYear, uf, region, sh, productName);
+    response.vlFob = await this.getVlFob(year, endYear, uf, region, sh, productName);
+    response.overallCountries = await this.getOverallCountries(year, endYear, uf, region, sh, productName);
+    return response;
   }
 }

@@ -2,7 +2,6 @@ import { AppDataSource } from "..";
 import DimSh from "../models/dimSh";
 
 export default class DimShRepository {
-
   public async getProductByLetter(sh: string, letter: string): Promise<string[]> {
     const result = await AppDataSource.getRepository(DimSh)
       .createQueryBuilder("ent")

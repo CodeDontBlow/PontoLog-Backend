@@ -9,15 +9,22 @@ export default class BalancaController {
     this.repository = new BalancoRepository();
   }
 
-  getBalancoComercialByYear = (message: string) =>
+  getBalancoComercial = (message: string) =>
     asyncHandler(async (req, res) => {
       const { year } = req.params;
-      const region = req.query.region as string
-      const uf = req.query.uf as string
+      const region = req.query.region as string;
+      const uf = req.query.uf as string;
       const sh = req.query.sh as string;
       const productName = req.query.productName as string;
-      const endYear = req.query.endYear as string
-      const data = await this.repository.getBalancoComercialByYear(Number(year), Number(endYear), uf, region, sh, productName);
+      const endYear = req.query.endYear as string;
+      const data = await this.repository.getBalancoComercial(
+        Number(year),
+        Number(endYear),
+        uf,
+        region,
+        sh,
+        productName,
+      );
       new SuccessResponse(message, data).send(res);
     });
 }
