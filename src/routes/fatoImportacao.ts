@@ -27,6 +27,6 @@ router.get("/vl_fob/:year", fatoImportacaoController.getVlFob("Valor FOB por ano
 
 router.get("/countries/:year", fatoImportacaoController.getOverallCountries("Todos os dados dos paises"));
 
-router.get("/:year", fatoImportacaoController.getAllData(''))
+router.get("/:year", fatoImportacaoController.getAllData("Todos os dados!"));
 
-export default router
+export default router;

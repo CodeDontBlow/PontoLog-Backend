@@ -1,3 +1,5 @@
+import { redis } from "../config";
+import { createClient } from "redis";
 import { DataSource } from "typeorm";
 import { db } from "../config";
 import FatoExportacao from "./models/fatoExportacao";
@@ -30,4 +32,19 @@ AppDataSource.initialize()
     console.error("Error during Data Source initialization", err);
   });
 
-export { AppDataSource };
+const RedisClient = createClient({
+  socket: {
+    host: redis.host,
+    port: redis.port,
+  },
+});
+
+RedisClient.connect()
+  .then(() => {
+    console.log("Redis has been initialized!");
+  })
+  .catch((err) => {
+    console.log("Error during Redis initialization", err);
+  });
+
+export { AppDataSource, RedisClient };

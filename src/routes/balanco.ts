@@ -5,6 +5,6 @@ const router = express.Router();
 const balancoController = new BalancoComerController();
 
 //Pesquisar balanco comercial por ano
-router.get("/:year", balancoController.getBalancoComercialByYear("Balanço comercial por ano."));
+router.get("/:year", balancoController.getBalancoComercial("Balanço comercial por ano."));
 
 export default router;
