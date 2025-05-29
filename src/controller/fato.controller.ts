@@ -107,12 +107,16 @@ export default abstract class FatoController<T> {
       const endYear = req.query.endYear ? Number(req.query.endYear) : undefined;
       const uf = req.query.uf as string | undefined;
       const region = req.query.region as string | undefined;
+      const productName = req.query.productName as string | undefined;
+      const sh = req.query.sh as string | undefined;
 
       const data = await this.repository.getAllData({
         year: Number(year),
         endYear: Number(endYear),
         uf,
         region,
+        productName,
+        sh
       });
 
       new SuccessResponse(message, data).send(res);
