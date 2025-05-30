@@ -1,14 +1,21 @@
-import express from "express";
-import router from "./routes";
-import cors from "cors";
-import "./database";
-import { corsUrl } from "./config";
-import { port } from "./config";
+import fs from 'fs';
+import https from 'https';
+import express from 'express';
+import router from './routes';
+import cors from 'cors';
+import 'dotenv/config'
+import './database';
+import { corsUrl, port } from './config';
 
 const app = express();
 app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
 app.use(router);
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+const options = {
+  key: fs.readFileSync(process.env.KEY_OPTIONS),
+  cert: fs.readFileSync(process.env.CERT_OPTIONS),
+};
+
+https.createServer(options, app).listen(port, () => {
+  console.log(`HTTPS Server listening on port ${port}`);
 });
