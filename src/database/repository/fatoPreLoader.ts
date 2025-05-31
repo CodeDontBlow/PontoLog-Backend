@@ -8,9 +8,9 @@ type Params = {
 };
 
 const START_YEAR = 2014;
-const END_YEAR = 2024;
+const END_YEAR = 2016;
 const CONCURRENCY_LIMIT = 10;
-const UFs = ['SP', 'MG', 'RS', 'PR', 'MT', 'PA', 'RJ', 'SC'];
+const UFs = ['SP'];
 const SH_OPTIONS = ['no_sh4_por'];
 
 export default class FatoPreloader<T> {
@@ -32,22 +32,22 @@ export default class FatoPreloader<T> {
     const combos: Params[] = [];
 
     for (let year = START_YEAR; year <= END_YEAR; year++) {
-      for (const uf of UFs) {
-        for (const sh of SH_OPTIONS) {
-          combos.push({ year, uf, sh });
-        }
-      }
+      // for (const uf of UFs) {
+      //   for (const sh of SH_OPTIONS) {
+          combos.push({ year });
+      //   }
+      // }
     }
 
-    for (let start = START_YEAR; start < END_YEAR; start++) {
-      for (let end = start + 1; end <= END_YEAR; end++) {
-        for (const uf of UFs) {
-          for (const sh of SH_OPTIONS) {
-            combos.push({ year: start, endYear: end, uf, sh });
-          }
-        }
-      }
-    }
+    // for (let start = START_YEAR; start < END_YEAR; start++) {
+    //   for (let end = start + 1; end <= END_YEAR; end++) {
+    //     for (const uf of UFs) {
+    //       for (const sh of SH_OPTIONS) {
+    //         combos.push({ year: start, endYear: end, uf, sh });
+    //       }
+    //     }
+    //   }
+    // }
 
     return combos;
   }

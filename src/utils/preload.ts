@@ -1,13 +1,11 @@
-import FatoImportacaoRepository from '../database/repository/fatoImportacaoRepository';
-import FatoExportacaoRepository from '../database/repository/fatoExportacaoRepository';
 import FatoPreloader from '../database/repository/fatoPreLoader';
+import {fatoImportacaoRepository} from '../database/./repository/singletons'
+import {fatoExportacaoRepository} from '../database/./repository/singletons'
 
 export async function preloadAll(): Promise<void> {
-  const importacaoRepo = new FatoImportacaoRepository();
-  const exportacaoRepo = new FatoExportacaoRepository();
 
-  const preloaderImportacao = new FatoPreloader(importacaoRepo);
-  const preloaderExportacao = new FatoPreloader(exportacaoRepo);
+  const preloaderImportacao = new FatoPreloader(fatoImportacaoRepository);
+  const preloaderExportacao = new FatoPreloader(fatoExportacaoRepository);
 
   await Promise.all([
     preloaderImportacao.preloadCache(),
