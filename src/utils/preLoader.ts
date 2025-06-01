@@ -8,12 +8,12 @@ type Params = {
   productName?: string | null;
   uf?: string | null; // Novo campo
 };
-
+// esta com erro na balanca comercial, está puxando com o regiao e dando erro
 const YEAR = 2014;
 const CONCURRENCY_LIMIT = 10;
 const SH_OPTIONS = ['no_sh4_por'];
-const UF_LIST = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
-const REGION_LIST = ['REGIAO NORTE', 'REGIAO NORDESTE', 'REGIAO CENTRO-OESTE', 'REGIAO SUDESTE', 'REGIAO SUL'];
+const UF_LIST = ['SP'];
+const REGION_LIST = ['REGIAO SUDESTE'];
 
 export default class FatoPreloader<T> {
   private repository: FatoRepository<T> | BalancaRepository;
