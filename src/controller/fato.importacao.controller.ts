@@ -1,9 +1,9 @@
 import FatoController from "./fato.controller";
 import FatoImportacao from "../database/models/fatoImportacao";
-import { fatoExportacaoRepository } from "../database/repository/singletons";
+import { fatoExportacaoRepository, fatoImportacaoRepository } from "../database/repository/singletons";
 
 export default class FatoImportacaoController extends FatoController<FatoImportacao> {
   constructor() {
-    super(fatoExportacaoRepository);
+    super(fatoImportacaoRepository);
   }
 }
