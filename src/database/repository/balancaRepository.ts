@@ -11,10 +11,16 @@ export default class BalancaRepository {
     region?: string,
     sh?: string,
     productName?: string,
-  ): Promise<{ CO_MES: string; total: number }[]> {
+  ): Promise<{ result: string; total: number }[]> {
     const key = getKey("Balanca", "getBalancoComercial", { year, endYear, uf, region, sh, productName });
     const resultCached = await RedisClient.get(key);
-    if (resultCached !== null) return JSON.parse(resultCached);
+    if (resultCached !== null) {
+    const parsed = JSON.parse(resultCached);
+    return parsed.map((r: any) => ({
+      result: r.label,
+      total: parseFloat(r.total),
+    }));
+  }
 
     const query = AppDataSource.getRepository(Balanca)
       .createQueryBuilder("ent")
@@ -22,9 +28,21 @@ export default class BalancaRepository {
       .addSelect("SUM(ent.balanca_comercial)", "total");
 
     if (endYear) {
-      query.andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear });
+      query.select([
+        "ent.co_ano AS label",
+        "SUM(ent.balanca_comercial) AS total"
+      ])
+      .andWhere("ent.co_ano BETWEEN :year AND :endYear", { year, endYear })
+      .groupBy("ent.co_ano")
+      .orderBy("ent.co_ano", "ASC")
     } else {
-      query.andWhere("ent.co_ano = :year", { year });
+      query.select([
+        "ent.co_mes AS label",
+        "SUM(ent.balanca_comercial) AS total"
+      ])
+      .andWhere("ent.co_ano = :year", { year })
+      .groupBy("ent.co_mes")
+      .orderBy("ent.co_mes", "ASC")
     }
 
     if (region) {
@@ -39,10 +57,10 @@ export default class BalancaRepository {
       query.andWhere(`dsh.${sh} = :productName`, { productName });
     }
 
-    const result = await query.groupBy("ent.co_mes").orderBy("co_mes", "DESC").getRawMany();
+    const result = await query.getRawMany();
     await RedisClient.set(key, JSON.stringify(result));
-    return result.map((r: { co_mes: string; total: string }) => ({
-      CO_MES: r.co_mes,
+    return result.map((r) => ({
+      result: r.label,
       total: parseFloat(r.total),
     }));
   }
