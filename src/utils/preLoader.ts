@@ -10,15 +10,17 @@ type Params = {
   uf?: string | null;
 };
 const START_YEAR = 2014
+const END_YEAR = 2015; 
 const CONCURRENCY_LIMIT = 50;
 const SH_OPTIONS = ['no_sh4_por'];
 
-const END_YEAR = 2015; // todos os anos
+const UF_LIST = ['SP']; 
+const REGION_LIST = ['REGIAO SUDESTE']; 
 
+// const UF_LIST = ['SP', 'MG', 'RS', 'PR', 'MT', 'PA', 'RJ', 'SC']; // estatos mais ifluentes
+// const REGION_LIST = ['REGIAO SUDESTE', 'REGIAO SUL', 'REGIAO NORTE']; //regioes mais influentes
 
-const UF_LIST = ['SP', 'MG', 'RS', 'PR', 'MT', 'PA', 'RJ', 'SC']; // estatos mais ifluentes
-const REGION_LIST = ['REGIAO SUDESTE', 'REGIAO SUL', 'REGIAO NORTE']; //regioes mais influentes
-
+// const END_YEAR = 2025; // todos os anos
 // const UF_LIST = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']; //todos os estados
 // const REGION_LIST = ['REGIAO NORTE', 'REGIAO NORDESTE', 'REGIAO CENTRO-OESTE', 'REGIAO SUDESTE', 'REGIAO SUL']; //todas as regioes
 
