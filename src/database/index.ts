@@ -11,6 +11,7 @@ import DimUf from "./models/dimUf";
 import DimVia from "./models/dimVia";
 import DimUrf from "./models/dimUrf";
 import Balanca from "./models/balanca";
+import { preloadAll } from "../utils/preload";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -25,8 +26,10 @@ const AppDataSource = new DataSource({
 });
 
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     console.log("Data Source has been initialized!");
+    // await preloadAll();
+
   })
   .catch((err) => {
     console.error("Error during Data Source initialization", err);
