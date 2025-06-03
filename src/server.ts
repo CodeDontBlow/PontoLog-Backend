@@ -1,16 +1,34 @@
+import { preloadAll } from './utils/preload'
+import { AppDataSource } from './database'
 import https from 'https';
 import fs from 'fs';
 import 'dotenv/config';
 import app from './app';
 import { port } from './config';
-import { preloadAll } from './utils/preload'
+
+async function initializeApp() {
+  try {
+    await AppDataSource.initialize();
+    console.log("Data Source has been initialized!");
+    
+    // Verifica se o módulo está sendo executado diretamente
+    if (require.main === module) {
+      await preloadAll();
+    }
+    
+    await startSecureServer();
+  } catch (err) {
+    console.error("Error during initialization", err);
+    process.exit(1);
+  }
+}
 
 async function startSecureServer() {
   const keyPath = process.env.KEY_OPTIONS;
   const certPath = process.env.CERT_OPTIONS;
 
   if (!keyPath || !certPath) {
-    console.error("KEY_OPTIONS ou CERT_OPTIONS não definidas.");
+    console.error("KEY_OPTIONS or CERT_OPTIONS not defined.");
     process.exit(1);
   }
 
@@ -19,12 +37,12 @@ async function startSecureServer() {
     cert: fs.readFileSync(certPath),
   };
 
-  // Executa preload para todos os repositórios
-  await preloadAll();
-
   https.createServer(options, app).listen(port, () => {
-    console.log(`HTTPS Server listening on https://localhost:${port}`);
+    console.log(`HTTPS Server listening on https://pontolog.hopto.org:${port}`);
   });
 }
 
-startSecureServer();
+// Inicializa o app apenas se for executado diretamente
+if (require.main === module) {
+  initializeApp();
+}

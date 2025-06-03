@@ -28,7 +28,6 @@ const AppDataSource = new DataSource({
 AppDataSource.initialize()
   .then(async () => {
     console.log("Data Source has been initialized!");
-    await preloadAll();
   })
   .catch((err) => {
     console.error("Error during Data Source initialization", err);
