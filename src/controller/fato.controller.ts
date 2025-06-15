@@ -89,7 +89,7 @@ export default abstract class FatoController<T> {
       const sh = req.query.sh as string;
       const region = req.query.region as string
       const productName = req.query.productName as string;
-      const data = await this.repository.getOverallCountries(Number(year), Number(endYear), uf,region, sh, productName);
+      const data = await this.repository.getOverallCountries(Number(year), Number(endYear), uf, region, sh, productName);
       new SuccessResponse(message, data).send(res);
     });
 
@@ -100,15 +100,19 @@ export default abstract class FatoController<T> {
       const endYear = req.query.endYear ? Number(req.query.endYear) : undefined;
       const uf = req.query.uf as string | undefined;
       const region = req.query.region as string | undefined;
+      const productName = req.query.productName as string | undefined;
+      const sh = req.query.sh as string | undefined;
 
       const data = await this.repository.getAllData({
         year: Number(year),
         endYear: Number(endYear),
         uf,
         region,
+        productName,
+        sh
       });
 
-    new SuccessResponse(message, data).send(res);
-  });
+      new SuccessResponse(message, data).send(res);
+    });
 
 }
