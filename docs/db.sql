@@ -88,7 +88,67 @@ CREATE TABLE balanca_comercial (
     balanca_comercial NUMERIC NOT NULL
 );
 
+------------------------------------------------------------------------------------------------
+-- prophet tables
 
+CREATE TABLE prophet_exportacao_kgliquido (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_exportacao_vlfob (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_exportacao_vlagregado (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_importacao_kgliquido (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_importacao_vlfob (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_importacao_vlagregado (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+CREATE TABLE prophet_balanca (
+    Data DATE PRIMARY KEY,
+    Previsao NUMERIC,
+    Limite_Inferior NUMERIC,
+    Limite_Superior NUMERIC,
+    Tendencia NUMERIC
+);
+
+
+-------------------------------------------------------------------------------------------------
 CREATE INDEX idx_co_uf                         ON fato_exportacao(co_uf);
 CREATE INDEX idx_co_ano                        ON fato_exportacao(co_ano);
 CREATE INDEX idx_co_urf                        ON fato_exportacao(co_urf);

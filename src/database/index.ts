@@ -12,6 +12,10 @@ import DimVia from "./models/dimVia";
 import DimUrf from "./models/dimUrf";
 import Balanca from "./models/balanca";
 import { preloadAll } from "../utils/preload";
+import BalancoProphet from "./models/previsao/balancoProphet";
+import { kgLiquidoExportacao } from "./models/previsao/exportacao/kgLiquido";
+import VlFobExportacao from "./models/previsao/exportacao/vlFob";
+import { vlAgregadoExportacao } from "./models/previsao/exportacao/vlAgregado";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -20,7 +24,7 @@ const AppDataSource = new DataSource({
   username: db.username,
   password: db.password,
   database: db.database,
-  entities: [FatoExportacao, FatoImportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia, Balanca],
+  entities: [FatoExportacao, FatoImportacao, DimPais, DimRegiao, DimSh, DimUf, DimUrf, DimVia, Balanca, BalancoProphet,kgLiquidoExportacao,VlFobExportacao,vlAgregadoExportacao],
   synchronize: false,
   logging: true,
 });
